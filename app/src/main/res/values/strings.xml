@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Calendar</string>
+    <string name="action_settings">Settings</string>
+    <string name="new_event">New Event</string>
+    <string name="title">Title</string>
+    <string name="location">Location</string>
+    <string name="description">Description</string>
+    <string name="all_day">ALL DAY</string>
+    <string name="day">d</string>
+    <string name="end_before_start">End Time can not be before Start Time !</string>
+</resources>

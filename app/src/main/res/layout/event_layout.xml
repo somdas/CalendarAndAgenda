@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/curr_time"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/curr_duration"
+        android:textColor="@color/gray"
+        android:layout_below="@+id/curr_time"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:id="@+id/curr_title"
+        android:textStyle="bold"
+        android:layout_marginLeft="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_above="@+id/curr_duration"
+        android:layout_toRightOf="@+id/curr_time"
+        android:layout_toEndOf="@+id/curr_time" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@+id/curr_duration"
+        android:layout_alignLeft="@+id/curr_title"
+        android:layout_alignStart="@+id/curr_title"
+        android:id="@+id/loc_container">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:tint="@color/gray"
+            android:src="@drawable/ic_location_on_black_18dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:id="@+id/curr_location"
+            android:textColor="@color/gray"
+            android:layout_alignBottom="@+id/imageView"
+            android:layout_toRightOf="@+id/imageView"
+            android:layout_toEndOf="@+id/imageView" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_below="@+id/loc_container"
+        android:layout_marginTop="15dp"
+        android:background="#d3d3d3" />
+
+</RelativeLayout>

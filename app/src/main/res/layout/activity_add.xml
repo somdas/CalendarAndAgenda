@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.calendar.AddActivity">
+    <ScrollView
+        android:id="@+id/ScrollView01"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="vertical" >
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.example.calendar.AddActivity">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_input_black_24dp"
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/imageInput"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editTitle"
+                        android:hint="@string/title"
+                        android:singleLine="true"
+                        android:background="@android:color/transparent"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignTop="@+id/imageInput"
+                        android:layout_marginLeft="15dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_toRightOf="@+id/imageInput"
+                        android:layout_toEndOf="@+id/imageInput" />
+
+                    <View
+                        android:id="@+id/divider1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dip"
+                        android:layout_below="@+id/imageInput"
+                        android:layout_marginTop="25dp"
+                        android:background="#3F51B5" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_schedule_black_24dp"
+                        android:id="@+id/schedulePic"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@+id/divider1"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All-day Event"
+                        android:id="@+id/all_day"
+                        android:layout_alignBottom="@+id/schedulePic"
+                        android:layout_alignLeft="@+id/editTitle"
+                        android:layout_alignStart="@+id/editTitle" />
+
+                    <Switch
+                        android:id="@+id/toggBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:layout_alignTop="@+id/divider1"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="New Text"
+                        android:id="@+id/date1"
+                        android:layout_below="@+id/toggBtn"
+                        android:layout_alignLeft="@+id/all_day"
+                        android:layout_alignStart="@+id/all_day"
+                        android:layout_marginTop="35dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="New Text"
+                        android:id="@+id/date2"
+                        android:layout_below="@+id/date1"
+                        android:layout_alignLeft="@+id/date1"
+                        android:layout_alignStart="@+id/date1"
+                        android:layout_marginTop="34dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="New Text"
+                        android:id="@+id/time1"
+                        android:layout_alignTop="@+id/date1"
+                        android:layout_alignRight="@+id/toggBtn"
+                        android:layout_alignEnd="@+id/toggBtn" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="New Text"
+                        android:id="@+id/time2"
+                        android:layout_alignTop="@+id/date2"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true" />
+
+                    <View
+                        android:id="@+id/divider2"
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dip"
+                        android:layout_below="@+id/time2"
+                        android:layout_marginTop="25dp"
+                        android:background="#3F51B5" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_place_black_24dp"
+                        android:id="@+id/imagePlace"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@+id/divider2"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editLocation"
+                        android:hint="@string/location"
+                        android:singleLine="true"
+                        android:background="@android:color/transparent"
+                        android:layout_alignTop="@+id/imagePlace"
+                        android:layout_alignRight="@+id/editTitle"
+                        android:layout_alignEnd="@+id/editTitle"
+                        android:layout_alignLeft="@+id/date2"
+                        android:layout_alignStart="@+id/date2" />
+
+                    <View
+                        android:id="@+id/divider3"
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dip"
+                        android:layout_below="@+id/editLocation"
+                        android:layout_marginTop="25dp"
+                        android:background="#3F51B5" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/imageSub"
+                        android:src="@drawable/ic_subject_black_24dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@+id/divider3"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editDesc"
+                        android:hint="@string/description"
+                        android:background="@android:color/transparent"
+                        android:layout_alignTop="@+id/imageSub"
+                        android:layout_alignRight="@+id/editTitle"
+                        android:layout_alignEnd="@+id/editTitle"
+                        android:layout_alignLeft="@+id/date2"
+                        android:layout_alignStart="@+id/date2" />
+
+
+            </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>
