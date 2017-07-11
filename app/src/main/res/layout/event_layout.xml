@@ -78,6 +78,6 @@
         android:layout_height="1dip"
         android:layout_below="@+id/loc_container"
         android:layout_marginTop="15dp"
-        android:background="#d3d3d3" />
+        android:background="@color/divider" />
 
 </RelativeLayout>

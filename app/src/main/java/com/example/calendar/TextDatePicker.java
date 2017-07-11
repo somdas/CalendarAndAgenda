@@ -51,9 +51,8 @@ public class TextDatePicker implements View.OnClickListener, DatePickerDialog.On
 
     }
 
-    // updates the date in the birth date EditText
     private void updateDisplay() {
-        dateView.setText(DateTimeUtils.formattedDate(dayOfWeek, month, day, year));
+        dateView.setText(DateTimeUtils.formattedDate(context, dayOfWeek, month, day, year));
     }
 
 

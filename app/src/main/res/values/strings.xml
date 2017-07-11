@@ -8,4 +8,38 @@
     <string name="all_day">ALL DAY</string>
     <string name="day">d</string>
     <string name="end_before_start">End Time can not be before Start Time !</string>
+    <string name="short_sunday">Sun</string>
+    <string name="short_monday">Mon</string>
+    <string name="short_tuesday">Tue</string>
+    <string name="short_wednesday">Wed</string>
+    <string name="short_thursday">Thu</string>
+    <string name="short_friday">Fri</string>
+    <string name="short_saturday">Sat</string>
+
+    <string name="short_january">Jan</string>
+    <string name="short_february">Feb</string>
+    <string name="short_march">Mar</string>
+    <string name="short_april">Apr</string>
+    <string name="short_may">May</string>
+    <string name="short_june">Jun</string>
+    <string name="short_july">Jul</string>
+    <string name="short_august">Aug</string>
+    <string name="short_september">Sep</string>
+    <string name="short_october">Oct</string>
+    <string name="short_november">Nov</string>
+    <string name="short_december">Dec</string>
+
+    <string name="full_january">January</string>
+    <string name="full_february">February</string>
+    <string name="full_march">March</string>
+    <string name="full_april">April</string>
+    <string name="full_may">May</string>
+    <string name="full_june">June</string>
+    <string name="full_july">July</string>
+    <string name="full_august">August</string>
+    <string name="full_september">September</string>
+    <string name="full_october">October</string>
+    <string name="full_november">November</string>
+    <string name="full_december">December</string>
+
 </resources>

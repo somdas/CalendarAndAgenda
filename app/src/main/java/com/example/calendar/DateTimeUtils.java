@@ -1,8 +1,9 @@
 package com.example.calendar;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -11,57 +12,128 @@ import java.util.TimeZone;
  */
 public class DateTimeUtils {
 
-    static String convertDayIntToString(int day) {
+    static String convertDayIntToString(Context context, int day) {
         if (day == 1)
-            return "Sun";
+            return context.getString(R.string.short_sunday);
         if (day == 2)
-            return "Mon";
+            return context.getString(R.string.short_monday);
         if (day == 3)
-            return "Tue";
+            return context.getString(R.string.short_tuesday);
         if (day == 4)
-            return "Wed";
+            return context.getString(R.string.short_wednesday);
         if (day == 5)
-            return "Thu";
+            return context.getString(R.string.short_thursday);
         if (day == 6)
-            return "Fri";
+            return context.getString(R.string.short_friday);
         if (day == 7)
-            return "Sat";
-
+            return context.getString(R.string.short_saturday);
         return "INVALID";
     }
 
-    static String convertMonthIntToString(int month) {
+    static String convertMonthIntToStringShort(Context context, int month) {
         if (month == 0)
-            return "Jan";
+            return context.getString(R.string.short_january);
         if (month == 1)
-            return "Feb";
+            return context.getString(R.string.short_february);
         if (month == 2)
-            return "Mar";
+            return context.getString(R.string.short_march);
         if (month == 3)
-            return "Apr";
+            return context.getString(R.string.short_april);
         if (month == 4)
-            return "May";
+            return context.getString(R.string.short_may);
         if (month == 5)
-            return "Jun";
+            return context.getString(R.string.short_june);
         if (month == 6)
-            return "Jul";
+            return context.getString(R.string.short_july);
         if (month == 7)
-            return "Aug";
+            return context.getString(R.string.short_august);
         if (month == 8)
-            return "Sep";
+            return context.getString(R.string.short_september);
         if (month == 9)
-            return "Oct";
+            return context.getString(R.string.short_october);
         if (month == 10)
-            return "Nov";
+            return context.getString(R.string.short_november);
         if (month == 11)
-            return "Dec";
+            return context.getString(R.string.short_december);
 
         return "INVALID";
     }
 
-    static String formattedDate(int dayOfWeek, int month, int dayOfMonth, int year) {
+    static int convertMonthStringToInt(Context context, String month) {
+        if (month.equals(context.getString(R.string.short_january)))
+            return 0;
+        if (month.equals(context.getString(R.string.short_february)))
+            return 1;
+        if (month.equals(context.getString(R.string.short_march)))
+            return 2;
+        if (month.equals(context.getString(R.string.short_april)))
+            return 3;
+        if (month.equals(context.getString(R.string.short_may)))
+            return 4;
+        if (month.equals(context.getString(R.string.short_june)))
+            return 5;
+        if (month.equals(context.getString(R.string.short_july)))
+            return 6;
+        if (month.equals(context.getString(R.string.short_august)))
+            return 7;
+        if (month.equals(context.getString(R.string.short_september)))
+            return 8;
+        if (month.equals(context.getString(R.string.short_october)))
+            return 9;
+        if (month.equals(context.getString(R.string.short_november)))
+            return 10;
+        if (month.equals(context.getString(R.string.short_december)))
+            return 11;
+        return -1;
+    }
+
+
+    static String convertMonthIntToStringFull(Context context, int month) {
+        if (month == 0)
+            return context.getString(R.string.full_january);
+        if (month == 1)
+            return context.getString(R.string.full_february);
+        if (month == 2)
+            return context.getString(R.string.full_march);
+        if (month == 3)
+            return context.getString(R.string.full_april);
+        if (month == 4)
+            return context.getString(R.string.full_may);
+        if (month == 5)
+            return context.getString(R.string.full_june);
+        if (month == 6)
+            return context.getString(R.string.full_july);
+        if (month == 7)
+            return context.getString(R.string.full_august);
+        if (month == 8)
+            return context.getString(R.string.full_september);
+        if (month == 9)
+            return context.getString(R.string.full_october);
+        if (month == 10)
+            return context.getString(R.string.full_november);
+        if (month == 11)
+            return context.getString(R.string.full_december);
+
+        return "INVALID";
+    }
+
+    static String formattedDate(Context context, int dayOfWeek, int month, int dayOfMonth, int year) {
         return new StringBuilder()
-                .append(convertDayIntToString(dayOfWeek)).append(", ").append(convertMonthIntToString(month)).append(" ").append(dayOfMonth).append(", ").append(year).toString();
+                .append(convertDayIntToString(context, dayOfWeek)).append(", ").append(convertMonthIntToStringShort(context, month)).append(" ").append(dayOfMonth).append(", ").append(year).toString();
+    }
+
+    static Calendar parseDate(Context context, String date) {
+        String month = date.substring(5, 8);
+        int monInt = convertMonthStringToInt(context, month);
+        int loc = date.indexOf(",", 8);
+        int day = Integer.parseInt(date.substring(9, loc));
+        int year = Integer.parseInt(date.substring(loc + 2));
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, monInt);
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_MONTH, day);
+        return cal;
     }
 
     static StringBuilder formattedTime(int hourOfDay, int minute) {
@@ -86,20 +158,32 @@ public class DateTimeUtils {
     }
 
 
-    static List<String> getDatesTwoYears() {
+    static List<CalendarData> getCalendarTwoYears(Context context) {
+        String date;
+        List<CalendarData> calendarList = new ArrayList<CalendarData>();
+        Calendar today = Calendar.getInstance(TimeZone.getDefault());
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
         int currentYear = calendar.get(Calendar.YEAR);
         int currentMonth = calendar.get(Calendar.MONTH);
         int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
         int targetYear = currentYear + 1;
         calendar.add(Calendar.YEAR, -1);
-        List<String> dates = new ArrayList<String>();
+
+        while (calendar.get(Calendar.DAY_OF_WEEK) != 1)
+            calendar.add(Calendar.DATE, -1);
 
         while (calendar.get(Calendar.YEAR) != targetYear || calendar.get(Calendar.MONTH) != currentMonth || calendar.get(Calendar.DAY_OF_MONTH) != currentDay) {
-            dates.add(formattedDate(calendar.get(Calendar.DAY_OF_WEEK), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.YEAR)));
+            CalendarData data = new CalendarData();
+            data.calendar = (Calendar) calendar.clone();
+            boolean sameDay = today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) &&
+                    today.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR);
+            if (sameDay)
+                data.isCurrent = true;
+            data.formattedDate = formattedDate(context, calendar.get(Calendar.DAY_OF_WEEK), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.YEAR));
+            calendarList.add(data);
             calendar.add(Calendar.DATE, 1);
         }
-        return dates;
+        return calendarList;
     }
 
     static String getDuration(Calendar start, Calendar end) {
@@ -122,6 +206,12 @@ public class DateTimeUtils {
         }
 
         return res.toString();
+    }
+
+    static int getDurationInDays(Calendar start, Calendar end) {
+        long seconds = (end.getTimeInMillis() - start.getTimeInMillis()) / 1000;
+        int days = (int) (seconds / 86400);
+        return days;
     }
 
     public static int daysSince(Calendar startDate, Calendar endDate) {

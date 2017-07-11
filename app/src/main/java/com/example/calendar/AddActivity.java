@@ -1,10 +1,9 @@
 package com.example.calendar;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,10 +13,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -54,8 +51,8 @@ public class AddActivity extends AppCompatActivity {
 
         TextView date1 = (TextView)findViewById(R.id.date1);
         TextView date2 = (TextView)findViewById(R.id.date2);
-        date1.setText(DateTimeUtils.formattedDate(dayOfWeek, month, day, year));
-        date2.setText(DateTimeUtils.formattedDate(dayOfWeek, month, day, year));
+        date1.setText(DateTimeUtils.formattedDate(this, dayOfWeek, month, day, year));
+        date2.setText(DateTimeUtils.formattedDate(this, dayOfWeek, month, day, year));
 
         time1 = (TextView)findViewById(R.id.time1);
         time2 = (TextView)findViewById(R.id.time2);

@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -22,9 +21,10 @@ public class DataStore {
     private AgendaSQLiteHelper mDbHelper;
     private SQLiteDatabase mDatabase;
     private static DataStore mInstance;
-
+    Context mContext;
     private DataStore(Context context) {
         mDbHelper = new AgendaSQLiteHelper(context);
+        mContext = context;
     }
 
     public static DataStore getInstance(Context context) {
@@ -129,7 +129,7 @@ public class DataStore {
                 endMinute = calendar.get(Calendar.MINUTE);
 
                 Event event = new Event(startDay, startMonth, startYear, startHour, startMinute, endDay, endMonth, endYear, endHour, endMinute, title, location, isAllDay, daysLeft, description);
-                key = DateTimeUtils.formattedDate(startDayOfWeek, startMonth, startDay, startYear);
+                key = DateTimeUtils.formattedDate(mContext, startDayOfWeek, startMonth, startDay, startYear);
                 if (!eventMap.containsKey(key))
                 {
                     List<Event> emptyList = new ArrayList<Event>();

@@ -50,7 +50,7 @@
                         android:layout_height="1dip"
                         android:layout_below="@+id/imageInput"
                         android:layout_marginTop="25dp"
-                        android:background="#3F51B5" />
+                        android:background="@color/tint_color" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -125,7 +125,7 @@
                         android:layout_height="1dip"
                         android:layout_below="@+id/time2"
                         android:layout_marginTop="25dp"
-                        android:background="#3F51B5" />
+                        android:background="@color/tint_color" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -156,7 +156,7 @@
                         android:layout_height="1dip"
                         android:layout_below="@+id/editLocation"
                         android:layout_marginTop="25dp"
-                        android:background="#3F51B5" />
+                        android:background="@color/tint_color" />
 
                     <ImageView
                         android:layout_width="wrap_content"
