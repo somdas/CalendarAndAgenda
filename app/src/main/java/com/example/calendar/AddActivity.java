@@ -26,8 +26,15 @@ public class AddActivity extends AppCompatActivity {
     TextTimePicker timePicker2;
     TextView time1;
     TextView time2;
-
-
+    private boolean isEdit = false;
+    private boolean isDateFixed = false;
+    private String mTitle, mLocation, mDescription;
+    private int mStartDay, mStartMonth, mStartYear, mStartHour, mStartMinute, mEndDay, mEndMonth, mEndYear, mEndHour, mEndMinute;
+    private boolean mIsAllDay = false;
+    private int mEventId = 0;
+    private static final int NO_ERR = 0;
+    private static final int ERR_START_AFTER_END = 1;
+    private static final int ERR_TIME_MORE_24 = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,13 +42,48 @@ public class AddActivity extends AppCompatActivity {
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
         this.getSupportActionBar().setTitle(getString(R.string.new_event));
+        Bundle existingInfo = getIntent().getExtras();
+        if (existingInfo != null) {
+            isEdit = existingInfo.getBoolean(Constants.KEY_IS_EDIT);
+            isDateFixed = existingInfo.getBoolean(Constants.KEY_IS_DATE_FIXED);
+            if (isEdit) {
+                mTitle = existingInfo.getString(Constants.KEY_TITLE);
+                mLocation = existingInfo.getString(Constants.KEY_LOCATION);
+                mDescription = existingInfo.getString(Constants.KEY_DESC);
+                mIsAllDay = existingInfo.getBoolean(Constants.KEY_IS_ALL_DAY);
+                mStartDay = existingInfo.getInt(Constants.KEY_START_DAY);
+                mStartMonth = existingInfo.getInt(Constants.KEY_START_MONTH);
+                mStartYear = existingInfo.getInt(Constants.KEY_START_YEAR);
+                mStartHour = existingInfo.getInt(Constants.KEY_START_HOUR);
+                mStartMinute = existingInfo.getInt(Constants.KEY_START_MINUTE);
+
+                mEndDay = existingInfo.getInt(Constants.KEY_END_DAY);
+                mEndMonth = existingInfo.getInt(Constants.KEY_END_MONTH);
+                mEndYear = existingInfo.getInt(Constants.KEY_END_YEAR);
+                mEndHour = existingInfo.getInt(Constants.KEY_END_HOUR);
+                mEndMinute = existingInfo.getInt(Constants.KEY_END_MINUTE);
+                mEventId = existingInfo.getInt(Constants.KEY_EVENT_ID);
+            } else if (isDateFixed) {
+                mStartDay = existingInfo.getInt(Constants.KEY_START_DAY);
+                mStartMonth = existingInfo.getInt(Constants.KEY_START_MONTH);
+                mStartYear = existingInfo.getInt(Constants.KEY_START_YEAR);
+                mStartHour = existingInfo.getInt(Constants.KEY_START_HOUR);
+                mStartMinute = existingInfo.getInt(Constants.KEY_START_MINUTE);
+            }
+        }
         setDateTime();
+        if (isEdit)
+            fillForm();
         handleSwitchChange();
     }
 
     private void setDateTime() {
         int day, month, year, dayOfWeek, hour, minute;
-        Calendar cal = Calendar.getInstance();
+        Calendar cal;
+        if (!isEdit && !isDateFixed)
+            cal = Calendar.getInstance();
+        else
+            cal = new GregorianCalendar(mStartYear, mStartMonth, mStartDay, mStartHour, mStartMinute);
         day = cal.get(Calendar.DAY_OF_MONTH);
         month = cal.get(Calendar.MONTH);
         year = cal.get(Calendar.YEAR);
@@ -50,21 +92,59 @@ public class AddActivity extends AppCompatActivity {
         minute = cal.get(Calendar.MINUTE);
 
         TextView date1 = (TextView)findViewById(R.id.date1);
-        TextView date2 = (TextView)findViewById(R.id.date2);
         date1.setText(DateTimeUtils.formattedDate(this, dayOfWeek, month, day, year));
-        date2.setText(DateTimeUtils.formattedDate(this, dayOfWeek, month, day, year));
-
         time1 = (TextView)findViewById(R.id.time1);
-        time2 = (TextView)findViewById(R.id.time2);
-
         time1.setText((DateTimeUtils.formattedTime(hour, minute)));
+        datePicker1 = new TextDatePicker(this, R.id.date1);
+        datePicker1.day = day;
+        datePicker1.month = month;
+        datePicker1.year = year;
+        timePicker1 = new TextTimePicker(this, R.id.time1);
+        timePicker1.hour = hour;
+        timePicker1.minute = minute;
+
+        if (isEdit) {
+            cal = new GregorianCalendar(mEndYear, mEndMonth, mEndDay, mEndHour, mEndMinute);
+            day = cal.get(Calendar.DAY_OF_MONTH);
+            month = cal.get(Calendar.MONTH);
+            year = cal.get(Calendar.YEAR);
+            dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+            hour = cal.get(Calendar.HOUR_OF_DAY);
+            minute = cal.get(Calendar.MINUTE);
+        }
+
+        TextView date2 = (TextView) findViewById(R.id.date2);
+        date2.setText(DateTimeUtils.formattedDate(this, dayOfWeek, month, day, year));
+        time2 = (TextView) findViewById(R.id.time2);
         time2.setText((DateTimeUtils.formattedTime(hour, minute)));
 
-        datePicker1 = new TextDatePicker(this, R.id.date1);
-        datePicker2 = new TextDatePicker(this, R.id.date2);
 
-        timePicker1 = new TextTimePicker(this, R.id.time1);
+        datePicker2 = new TextDatePicker(this, R.id.date2);
+        datePicker2.day = day;
+        datePicker2.month = month;
+        datePicker2.year = year;
+
         timePicker2 = new TextTimePicker(this, R.id.time2);
+        timePicker2.hour = hour;
+        timePicker2.minute = minute;
+
+        if (isEdit && mIsAllDay) {
+            timePicker1.removeClickListener();
+            time1.setText("");
+            timePicker2.removeClickListener();
+            time2.setText("");
+        }
+    }
+
+    private void fillForm() {
+        EditText title = (EditText) findViewById(R.id.editTitle);
+        EditText location = (EditText) findViewById(R.id.editLocation);
+        EditText description = (EditText) findViewById(R.id.editDesc);
+        Switch isAllDay = (Switch) findViewById(R.id.toggBtn);
+        title.setText(mTitle);
+        location.setText(mLocation);
+        description.setText(mDescription);
+        isAllDay.setChecked(mIsAllDay);
     }
 
     private void handleSwitchChange() {
@@ -87,7 +167,9 @@ public class AddActivity extends AppCompatActivity {
                             time2.setText("");
                         }
                     });
+                    mIsAllDay = true;
                 } else {
+                    mIsAllDay = false;
                     setDateTime();
                 }
             }
@@ -101,9 +183,12 @@ public class AddActivity extends AppCompatActivity {
             finish();
         }
         if (item.getItemId() == R.id.done) {
-            boolean isValid = isFormValid();
-            if (!isValid) {
+            int res = isFormValid();
+            if (res == ERR_START_AFTER_END) {
                 Toast.makeText(this, getResources().getString(R.string.end_before_start),
+                        Toast.LENGTH_LONG).show();
+            } else if (res == ERR_TIME_MORE_24) {
+                Toast.makeText(this, getResources().getString(R.string.time_more_than_24),
                         Toast.LENGTH_LONG).show();
             } else {
                 Calendar start = new GregorianCalendar(datePicker1.year, datePicker1.month, datePicker1.day, timePicker1.hour, timePicker1.minute);
@@ -115,6 +200,8 @@ public class AddActivity extends AppCompatActivity {
 
                 DataStore dataStore = DataStore.getInstance(this);
                 dataStore.open();
+                if (isEdit)
+                    dataStore.deleteEvent(mEventId);
                 dataStore.createAgenda(datePicker1.day, datePicker1.month, datePicker1.year, timePicker1.hour, timePicker1.minute, datePicker2.day, datePicker2.month, datePicker2.year, timePicker2.hour, timePicker2.minute, title.getText().toString(), location.getText().toString(), isAllDay.isChecked(), description.getText().toString());
                 dataStore.close();
 
@@ -128,13 +215,18 @@ public class AddActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean isFormValid() {
+    private int isFormValid() {
         Calendar start = new GregorianCalendar(datePicker1.year, datePicker1.month, datePicker1.day, timePicker1.hour, timePicker1.minute);
         Calendar end = new GregorianCalendar(datePicker2.year, datePicker2.month, datePicker2.day, timePicker2.hour, timePicker2.minute);
         if (end.before(start))
-            return false;
-        else
-            return true;
+            return ERR_START_AFTER_END;
+        Switch onOffSwitch = (Switch) findViewById(R.id.toggBtn);
+        if (!onOffSwitch.isChecked()) {
+            long seconds = (end.getTimeInMillis() - start.getTimeInMillis()) / 1000;
+            if (seconds > 86400)
+                return ERR_START_AFTER_END;
+        }
+        return NO_ERR;
     }
 
     @Override

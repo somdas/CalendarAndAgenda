@@ -23,7 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -61,11 +60,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setSupportActionBar(toolbar);
         mContext = this;
         mInstance = this;
+        mStartDate = Calendar.getInstance(TimeZone.getDefault());
+        mStartDate.add(Calendar.YEAR, -1);
+        while (mStartDate.get(Calendar.DAY_OF_WEEK) != 1)
+            mStartDate.add(Calendar.DATE, -1);
         FloatingActionButton add = (FloatingActionButton) findViewById(R.id.add);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
+                intent.putExtra(Constants.KEY_IS_EDIT, false);
                 intent.setClass(mContext, AddActivity.class);
                 startActivity(intent);
             }
@@ -86,17 +90,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     LoaderData createContainerList() {
-        mStartDate = Calendar.getInstance(TimeZone.getDefault());
-        mStartDate.add(Calendar.YEAR, -1);
-        while (mStartDate.get(Calendar.DAY_OF_WEEK) != 1)
-            mStartDate.add(Calendar.DATE, -1);
-
-        calendarDataList = DateTimeUtils.getCalendarTwoYears(mContext);
+        List<AdapterContainer> containerListLocal = new ArrayList<AdapterContainer>();
+        List<CalendarData> calendarDataLisLocal = new ArrayList<CalendarData>();
+        calendarDataLisLocal = DateTimeUtils.getCalendarTwoYears(mContext);
         DataStore dataStore = DataStore.getInstance(this);
         dataStore.open();
         HashMap<String, List<Event>> eventMap = dataStore.getAllEvents();
         dataStore.close();
-        for (CalendarData data : calendarDataList) {
+        for (CalendarData data : calendarDataLisLocal) {
             DayEventsData daysData = new DayEventsData();
 
             if (eventMap.containsKey(data.formattedDate)) {
@@ -108,25 +109,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             AdapterContainer headerContainer = new AdapterContainer();
             headerContainer.isHeader = true;
             headerContainer.header = data.formattedDate;
-            containerList.add(headerContainer);
+            containerListLocal.add(headerContainer);
 
             if (daysData.isNoEvent) {
                 AdapterContainer noEventContainer = new AdapterContainer();
                 noEventContainer.isNoEvent = true;
-                containerList.add(noEventContainer);
+                containerListLocal.add(noEventContainer);
             } else {
                 for (Event event : daysData.eventList)
                 {
                     AdapterContainer eventContainer = new AdapterContainer();
                     eventContainer.event = event;
-                    containerList.add(eventContainer);
+                    containerListLocal.add(eventContainer);
                 }
             }
 
         }
         LoaderData data = new LoaderData();
-        data.adapterContainerList = containerList;
-        data.calendarDataList = calendarDataList;
+        data.adapterContainerList = containerListLocal;
+        data.calendarDataList = calendarDataLisLocal;
 
         return data;
     }
@@ -309,16 +310,50 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id){
                 AdapterContainer container = containerList.get(position);
-                if (container.isNoEvent)
-                {
-                    Toast.makeText(mContext, "This is NO EVENT!",
-                            Toast.LENGTH_LONG).show();
-                } else if (!container.isNoEvent && !container.isHeader)
-                {
-                    Toast.makeText(mContext, "This is EVENT!",
-                            Toast.LENGTH_LONG).show();
-                }
+                if (container.isNoEvent) {
+                    String header = containerList.get(position - 1).header;
+                    Calendar calendar = DateTimeUtils.parseDate(mContext, header);
+                    Calendar current = Calendar.getInstance();
+                    calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+                    Intent intent = new Intent();
+                    intent.setClass(mContext, AddActivity.class);
+                    intent.putExtra(Constants.KEY_IS_EDIT, false);
+                    intent.putExtra(Constants.KEY_IS_DATE_FIXED, true);
+                    intent.putExtra(Constants.KEY_START_DAY, calendar.get(Calendar.DAY_OF_MONTH));
+                    intent.putExtra(Constants.KEY_START_MONTH, calendar.get(Calendar.MONTH));
+                    intent.putExtra(Constants.KEY_START_YEAR, calendar.get(Calendar.YEAR));
+                    intent.putExtra(Constants.KEY_START_HOUR, current.get(Calendar.HOUR));
+                    intent.putExtra(Constants.KEY_START_MINUTE, current.get(Calendar.MINUTE));
+                    startActivity(intent);
+                } else if (!container.isNoEvent && !container.isHeader) {
+                    Intent intent = new Intent();
+                    intent.setClass(mContext, AddActivity.class);
+                    intent.putExtra(Constants.KEY_IS_EDIT, true);
+                    if (!container.event.isAllDay) {
+                        intent.putExtra(Constants.KEY_START_DAY, container.event.startDay);
+                        intent.putExtra(Constants.KEY_START_MONTH, container.event.startMonth);
+                        intent.putExtra(Constants.KEY_START_YEAR, container.event.startYear);
 
+                    } else {
+                        intent.putExtra(Constants.KEY_START_DAY, container.event.allDayStartDay);
+                        intent.putExtra(Constants.KEY_START_MONTH, container.event.allDayStartMonth);
+                        intent.putExtra(Constants.KEY_START_YEAR, container.event.allDayStartYear);
+                    }
+                    intent.putExtra(Constants.KEY_START_HOUR, container.event.startHour);
+                    intent.putExtra(Constants.KEY_START_MINUTE, container.event.startMinute);
+                    intent.putExtra(Constants.KEY_END_DAY, container.event.endDay);
+                    intent.putExtra(Constants.KEY_END_MONTH, container.event.endMonth);
+                    intent.putExtra(Constants.KEY_END_YEAR, container.event.endYear);
+                    intent.putExtra(Constants.KEY_END_HOUR, container.event.endHour);
+                    intent.putExtra(Constants.KEY_END_MINUTE, container.event.endMinute);
+
+                    intent.putExtra(Constants.KEY_TITLE, container.event.title);
+                    intent.putExtra(Constants.KEY_LOCATION, container.event.location);
+                    intent.putExtra(Constants.KEY_DESC, container.event.description);
+                    intent.putExtra(Constants.KEY_IS_ALL_DAY, container.event.isAllDay);
+                    intent.putExtra(Constants.KEY_EVENT_ID, container.event.eventID);
+                    startActivity(intent);
+                }
             }
         });
 

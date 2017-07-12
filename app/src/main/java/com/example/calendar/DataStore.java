@@ -46,51 +46,29 @@ public class DataStore {
     public void createAgenda(int startDay, int startMonth, int startYear, int startHour, int startMinute, int endDay, int endMonth, int endYear, int endHour, int endMinute, String title, String location, boolean isAllDay, String description) {
 
 
+        Calendar start = new GregorianCalendar(startYear, startMonth, startDay, startHour, startMinute);
+        Calendar end = new GregorianCalendar(endYear, endMonth, endDay, endHour, endMinute);
+        long startTime = start.getTimeInMillis();
+        long endTime = end.getTimeInMillis();
+
+        ContentValues values = new ContentValues();
+        values.put(AgendaSQLiteHelper.START_TIME, startTime);
+        values.put(AgendaSQLiteHelper.END_TIME, endTime);
+        values.put(AgendaSQLiteHelper.TITLE, title);
+        values.put(AgendaSQLiteHelper.LOCATION, location);
+        values.put(AgendaSQLiteHelper.DESCRIPTION, description);
+
         if (!isAllDay) {
-            Calendar start = new GregorianCalendar(startYear, startMonth, startDay, startHour, startMinute);
-            Calendar end = new GregorianCalendar(endYear, endMonth, endDay, endHour, endMinute);
-
-            long startTime = start.getTimeInMillis();
-            long endTime = end.getTimeInMillis();
-
-            ContentValues values = new ContentValues();
-            values.put(AgendaSQLiteHelper.START_TIME, startTime);
-            values.put(AgendaSQLiteHelper.END_TIME, endTime);
-            values.put(AgendaSQLiteHelper.TITLE, title);
-            values.put(AgendaSQLiteHelper.LOCATION, location);
             values.put(AgendaSQLiteHelper.IS_ALL_DAY, 0);
             values.put(AgendaSQLiteHelper.ALL_DAYS_NUMBER, 0);
-            values.put(AgendaSQLiteHelper.DESCRIPTION, description);
-
-            mDatabase.insert(AgendaSQLiteHelper.TABLE_NAME, null,
-                    values);
         }
         else {
-            Calendar start = new GregorianCalendar(startYear, startMonth, startDay);
-            Calendar end = new GregorianCalendar(endYear, endMonth, endDay);
-
-            long endTime = end.getTimeInMillis();
-
+            values.put(AgendaSQLiteHelper.IS_ALL_DAY, 1);
             int days = DateTimeUtils.daysSince(start, end);
-            while (days > 0) {
-                long startTime = start.getTimeInMillis();
-
-                ContentValues values = new ContentValues();
-                values.put(AgendaSQLiteHelper.START_TIME, startTime);
-                values.put(AgendaSQLiteHelper.END_TIME, endTime);
-                values.put(AgendaSQLiteHelper.TITLE, title);
-                values.put(AgendaSQLiteHelper.LOCATION, location);
-                values.put(AgendaSQLiteHelper.IS_ALL_DAY, 1);
-                values.put(AgendaSQLiteHelper.ALL_DAYS_NUMBER, days);
-                values.put(AgendaSQLiteHelper.DESCRIPTION, description);
-
-                mDatabase.insert(AgendaSQLiteHelper.TABLE_NAME, null,
-                        values);
-                days--;
-                start.add(Calendar.DAY_OF_MONTH, 1);
-            }
-
+            values.put(AgendaSQLiteHelper.ALL_DAYS_NUMBER, days);
         }
+        mDatabase.insert(AgendaSQLiteHelper.TABLE_NAME, null,
+                values);
     }
 
     public HashMap<String, List<Event>> getAllEvents()
@@ -105,6 +83,7 @@ public class DataStore {
 
         if (cursor.moveToFirst()) {
             do {
+                int eventID = cursor.getInt(0);
                 long startTime = cursor.getLong(1);
                 long endTime = cursor.getLong(2);
                 String title = cursor.getString(3);
@@ -128,19 +107,42 @@ public class DataStore {
                 endHour = calendar.get(Calendar.HOUR_OF_DAY);
                 endMinute = calendar.get(Calendar.MINUTE);
 
-                Event event = new Event(startDay, startMonth, startYear, startHour, startMinute, endDay, endMonth, endYear, endHour, endMinute, title, location, isAllDay, daysLeft, description);
-                key = DateTimeUtils.formattedDate(mContext, startDayOfWeek, startMonth, startDay, startYear);
-                if (!eventMap.containsKey(key))
-                {
-                    List<Event> emptyList = new ArrayList<Event>();
-                    eventMap.put(key, emptyList);
-                }
+                if (!isAllDay) {
+                    Event event = new Event(eventID, startDay, startMonth, startYear, startHour, startMinute, endDay, endMonth, endYear, endHour, endMinute, title, location, isAllDay, daysLeft, description);
 
-                currEventList = eventMap.get(key);
-                currEventList.add(event);
+                    key = DateTimeUtils.formattedDate(mContext, startDayOfWeek, startMonth, startDay, startYear);
+                    if (!eventMap.containsKey(key)) {
+                        List<Event> emptyList = new ArrayList<Event>();
+                        eventMap.put(key, emptyList);
+                    }
+
+                    currEventList = eventMap.get(key);
+                    currEventList.add(event);
+                } else {
+                    Calendar cal = new GregorianCalendar(startYear, startMonth, startDay);
+                    Calendar orig = (Calendar) cal.clone();
+                    for (int i = 0; i < daysLeft; i++) {
+                        Event event = new Event(eventID, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR), 0, 0, endDay, endMonth, endYear, 0, 0, title, location, isAllDay, daysLeft - i, description);
+                        event.allDayStartDay = orig.get(Calendar.DAY_OF_MONTH);
+                        event.allDayStartMonth = orig.get(Calendar.MONTH);
+                        event.allDayStartYear = orig.get(Calendar.YEAR);
+                        key = DateTimeUtils.formattedDate(mContext, cal.get(Calendar.DAY_OF_WEEK), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.YEAR));
+                        if (!eventMap.containsKey(key)) {
+                            List<Event> emptyList = new ArrayList<Event>();
+                            eventMap.put(key, emptyList);
+                        }
+                        currEventList = eventMap.get(key);
+                        currEventList.add(event);
+                        cal.add(Calendar.DATE, 1);
+                    }
+                }
 
             } while (cursor.moveToNext());
         }
         return eventMap;
+    }
+
+    public void deleteEvent(int eventID) {
+        mDatabase.execSQL("DELETE FROM " + AgendaSQLiteHelper.TABLE_NAME + " WHERE " + AgendaSQLiteHelper.COLUMN_ID + "= " + eventID);
     }
 }

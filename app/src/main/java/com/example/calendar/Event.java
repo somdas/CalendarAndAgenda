@@ -5,7 +5,7 @@ package com.example.calendar;
  */
 public class Event
 {
-    public Event(int startDay, int startMonth, int startYear, int startHour, int startMinute, int endDay, int endMonth, int endYear, int endHour, int endMinute, String title, String location, boolean isAllDay, int daysLeft, String description)
+    public Event(int eventID, int startDay, int startMonth, int startYear, int startHour, int startMinute, int endDay, int endMonth, int endYear, int endHour, int endMinute, String title, String location, boolean isAllDay, int daysLeft, String description)
     {
         this.startDay = startDay;
         this.startMonth = startMonth;
@@ -22,8 +22,10 @@ public class Event
         this.isAllDay = isAllDay;
         this.daysLeft = daysLeft;
         this.description = description;
+        this.eventID = eventID;
     }
 
+    public int eventID;
     public int startDay, startMonth, startYear, startHour, startMinute;
     public int endDay, endMonth, endYear, endHour, endMinute;
     public String title;
@@ -31,4 +33,7 @@ public class Event
     public boolean isAllDay;
     public int daysLeft;
     public String description;
+    public int allDayStartDay;
+    public int allDayStartMonth;
+    public int allDayStartYear;
 }

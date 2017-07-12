@@ -8,6 +8,7 @@
     <string name="all_day">ALL DAY</string>
     <string name="day">d</string>
     <string name="end_before_start">End Time can not be before Start Time !</string>
+    <string name="time_more_than_24">Time Cannot be more that 24 hours for events which are not All Day !</string>
     <string name="short_sunday">Sun</string>
     <string name="short_monday">Mon</string>
     <string name="short_tuesday">Tue</string>
