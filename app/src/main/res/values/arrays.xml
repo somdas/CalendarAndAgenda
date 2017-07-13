@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinnerItems">
+        <item>No Reminder</item>
+        <item>Remind me 15 minutes before the event</item>
+        <item>Remind me 30 minutes before the event</item>
+        <item>Remind me 1 hour before the event</item>
+        <item>Remind me 2 hours before the event</item>
+        <item>Remind me 5 hours before the event</item>
+    </string-array>
+</resources>

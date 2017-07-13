@@ -22,5 +22,7 @@ public class Constants {
     public static final String KEY_DESC = "description";
     public static final String KEY_IS_DATE_FIXED = "is_date_fixed";
     public static final String KEY_EVENT_ID = "event_id";
+    public static final String KEY_TIME = "time";
+    public static final String KEY_REMINDER = "reminder";
 
 }

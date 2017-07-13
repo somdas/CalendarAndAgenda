@@ -43,4 +43,6 @@
     <string name="full_november">November</string>
     <string name="full_december">December</string>
 
+    <string name="meeting">Meeting at</string>
+
 </resources>

@@ -19,7 +19,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -352,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     intent.putExtra(Constants.KEY_DESC, container.event.description);
                     intent.putExtra(Constants.KEY_IS_ALL_DAY, container.event.isAllDay);
                     intent.putExtra(Constants.KEY_EVENT_ID, container.event.eventID);
+                    intent.putExtra(Constants.KEY_REMINDER, container.event.reminder);
                     startActivity(intent);
                 }
             }
@@ -428,13 +428,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            getGridView().setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, (int) mContext.getResources().getDimension(R.dimen.short_cal_height)));
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

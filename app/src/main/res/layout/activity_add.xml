@@ -20,7 +20,7 @@
                 android:layout_height="match_parent"
                 tools:context="com.example.calendar.AddActivity">
 
-                    <ImageView
+                    <android.support.v7.widget.AppCompatImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_input_black_24dp"
@@ -28,6 +28,7 @@
                         android:id="@+id/imageInput"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentLeft="true"
+                        android:tint="@color/colorAccent"
                         android:layout_alignParentStart="true" />
 
                     <EditText
@@ -52,7 +53,7 @@
                         android:layout_marginTop="25dp"
                         android:background="@color/tint_color" />
 
-                    <ImageView
+                    <android.support.v7.widget.AppCompatImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_schedule_black_24dp"
@@ -60,6 +61,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_below="@+id/divider1"
                         android:layout_alignParentLeft="true"
+                        android:tint="@color/colorAccent"
                         android:layout_alignParentStart="true" />
 
                     <TextView
@@ -127,7 +129,7 @@
                         android:layout_marginTop="25dp"
                         android:background="@color/tint_color" />
 
-                    <ImageView
+                    <android.support.v7.widget.AppCompatImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_place_black_24dp"
@@ -135,6 +137,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_below="@+id/divider2"
                         android:layout_alignParentLeft="true"
+                        android:tint="@color/colorAccent"
                         android:layout_alignParentStart="true" />
 
                     <EditText
@@ -158,14 +161,44 @@
                         android:layout_marginTop="25dp"
                         android:background="@color/tint_color" />
 
-                    <ImageView
+                    <android.support.v7.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/imageAlert"
+                        android:src="@drawable/ic_add_alert_black_24dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@+id/divider3"
+                        android:layout_alignParentLeft="true"
+                        android:tint="@color/colorAccent"
+                        android:layout_alignParentStart="true" />
+
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/imageAlert"
+                        android:layout_alignLeft="@+id/date2"
+                        android:layout_alignStart="@+id/date2"
+                        android:spinnerMode="dropdown" />
+
+                    <View
+                        android:id="@+id/divider4"
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dip"
+                        android:layout_below="@+id/spinner"
+                        android:layout_marginTop="25dp"
+                        android:background="@color/tint_color" />
+
+
+                    <android.support.v7.widget.AppCompatImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/imageSub"
                         android:src="@drawable/ic_subject_black_24dp"
                         android:layout_marginTop="10dp"
-                        android:layout_below="@+id/divider3"
+                        android:layout_below="@+id/divider4"
                         android:layout_alignParentLeft="true"
+                        android:tint="@color/colorAccent"
                         android:layout_alignParentStart="true" />
 
                     <EditText

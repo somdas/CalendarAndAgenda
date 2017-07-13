@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
 /**
  * Created by sbandyop on 7/5/2017.
  */
-public class CalendarDateAdapter extends BaseAdapter implements View.OnClickListener {
+public class CalendarDateAdapter extends BaseAdapter {
 
     private Context mContext;
     private LayoutInflater mInflater;
@@ -107,12 +106,6 @@ public class CalendarDateAdapter extends BaseAdapter implements View.OnClickList
 
         return convertView;
 
-    }
-
-    @Override
-    public void onClick(View v) {
-        Toast.makeText(mContext, "This is my Toast message!",
-                Toast.LENGTH_LONG).show();
     }
 
     static class ViewHolder {
