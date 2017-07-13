@@ -139,11 +139,18 @@ public class DateTimeUtils {
     static StringBuilder formattedTime(int hourOfDay, int minute) {
         String AM_PM ;
         String minuteStr;
+        String hourStr;
         if(hourOfDay < 12) {
             AM_PM = "AM";
         } else {
             AM_PM = "PM";
             hourOfDay = hourOfDay - 12;
+        }
+
+        if (hourOfDay < 10) {
+            hourStr = "0" + hourOfDay;
+        } else {
+            hourStr = "" + hourOfDay;
         }
 
         if (minute < 10) {
@@ -154,7 +161,7 @@ public class DateTimeUtils {
         }
 
         return new StringBuilder()
-                .append(hourOfDay).append(":").append(minuteStr).append(" ").append(AM_PM);
+                .append(hourStr).append(":").append(minuteStr).append(" ").append(AM_PM);
     }
 
 
