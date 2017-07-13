@@ -6,14 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 /**
  * Created by sbandyop on 7/5/2017.
  */
-public class GridHeaderAdapter extends BaseAdapter implements View.OnClickListener {
+public class GridHeaderAdapter extends BaseAdapter {
 
     private Context mContext;
     private LayoutInflater mInflater;
@@ -66,12 +65,6 @@ public class GridHeaderAdapter extends BaseAdapter implements View.OnClickListen
         mHolder.date.setText(mContainerList.get(position));
         return convertView;
 
-    }
-
-    @Override
-    public void onClick(View v) {
-        Toast.makeText(mContext, "This is my Toast message!",
-                Toast.LENGTH_LONG).show();
     }
 
     static class ViewHolder {

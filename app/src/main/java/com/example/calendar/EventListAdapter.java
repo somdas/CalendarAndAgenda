@@ -7,10 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -18,7 +16,7 @@ import java.util.List;
 /**
  * Created by sbandyop on 7/5/2017.
  */
-public class EventListAdapter extends BaseAdapter implements View.OnClickListener{
+public class EventListAdapter extends BaseAdapter {
 
     private Context mContext;
     private LayoutInflater mInflater;
@@ -109,16 +107,10 @@ public class EventListAdapter extends BaseAdapter implements View.OnClickListene
         }
 
 
-        if (getItemViewType(position) == TYPE_HEADER)
-        {
+        if (getItemViewType(position) == TYPE_HEADER) {
             mHolder.title.setText(mContainerList.get(position).header);
-        }
-        else if (getItemViewType(position) == TYPE_NO_EVENT)
-        {
-            //mHolder.no_event.setOnClickListener(this);
-        }
-        else
-        {
+        } else if (getItemViewType(position) == TYPE_NO_EVENT) {
+        } else {
             Event event = mContainerList.get(position).event;
             mHolder.curr_title.setText(event.title);
             if (event.isAllDay)
@@ -155,12 +147,6 @@ public class EventListAdapter extends BaseAdapter implements View.OnClickListene
         Calendar end = new GregorianCalendar(event.endYear, event.endMonth, event.endDay, event.endHour, event.endMinute);
         return DateTimeUtils.getDuration(start, end);
 
-    }
-
-    @Override
-    public void onClick(View v) {
-        Toast.makeText(mContext, "This is my Toast message!",
-                Toast.LENGTH_LONG).show();
     }
 
     static class ViewHolder

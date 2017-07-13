@@ -20,11 +20,12 @@ public class AgendaSQLiteHelper extends SQLiteOpenHelper {
     public static final String IS_ALL_DAY = "is_all_day";
     public static final String ALL_DAYS_NUMBER = "all_day_number";
     public static final String DESCRIPTION = "description";
+    public static final String REMINDER = "reminder";
 
     private static final String DATABASE_CREATE = "create table "
             + TABLE_NAME + "( " + COLUMN_ID
             + " integer primary key autoincrement, " + START_TIME
-            + " integer, " + END_TIME + " integer, " + TITLE + " text, " + LOCATION + " text, " +  IS_ALL_DAY + " integer, " + ALL_DAYS_NUMBER + " integer, " + DESCRIPTION + " text);";
+            + " integer, " + END_TIME + " integer, " + TITLE + " text, " + LOCATION + " text, " + IS_ALL_DAY + " integer, " + ALL_DAYS_NUMBER + " integer, " + DESCRIPTION + " text, " + REMINDER + " integer);";
 
     public AgendaSQLiteHelper(Context context) {
         super(context, AGENDA_DB, null, DATABASE_VERSION);

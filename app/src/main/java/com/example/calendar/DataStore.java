@@ -22,6 +22,7 @@ public class DataStore {
     private SQLiteDatabase mDatabase;
     private static DataStore mInstance;
     Context mContext;
+    public static int notificationCount;
     private DataStore(Context context) {
         mDbHelper = new AgendaSQLiteHelper(context);
         mContext = context;
@@ -43,7 +44,7 @@ public class DataStore {
        mDbHelper.close();
     }
 
-    public void createAgenda(int startDay, int startMonth, int startYear, int startHour, int startMinute, int endDay, int endMonth, int endYear, int endHour, int endMinute, String title, String location, boolean isAllDay, String description) {
+    public void createAgenda(int startDay, int startMonth, int startYear, int startHour, int startMinute, int endDay, int endMonth, int endYear, int endHour, int endMinute, String title, String location, boolean isAllDay, String description, int reminderTime) {
 
 
         Calendar start = new GregorianCalendar(startYear, startMonth, startDay, startHour, startMinute);
@@ -57,6 +58,7 @@ public class DataStore {
         values.put(AgendaSQLiteHelper.TITLE, title);
         values.put(AgendaSQLiteHelper.LOCATION, location);
         values.put(AgendaSQLiteHelper.DESCRIPTION, description);
+        values.put(AgendaSQLiteHelper.REMINDER, reminderTime);
 
         if (!isAllDay) {
             values.put(AgendaSQLiteHelper.IS_ALL_DAY, 0);
@@ -71,8 +73,7 @@ public class DataStore {
                 values);
     }
 
-    public HashMap<String, List<Event>> getAllEvents()
-    {
+    public HashMap<String, List<Event>> getAllEvents() {
         HashMap<String, List<Event>> eventMap = new HashMap<String, List<Event>>();
         List<Event> currEventList = new ArrayList<Event>();
         String selectQuery = "SELECT  * FROM " + AgendaSQLiteHelper.TABLE_NAME;
@@ -91,6 +92,7 @@ public class DataStore {
                 boolean isAllDay = cursor.getInt(5) == 1? true : false;
                 int daysLeft = cursor.getInt(6);
                 String description = cursor.getString(7);
+                int reminder = cursor.getInt(8);
 
                 calendar.setTimeInMillis(startTime);
                 startDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -108,7 +110,7 @@ public class DataStore {
                 endMinute = calendar.get(Calendar.MINUTE);
 
                 if (!isAllDay) {
-                    Event event = new Event(eventID, startDay, startMonth, startYear, startHour, startMinute, endDay, endMonth, endYear, endHour, endMinute, title, location, isAllDay, daysLeft, description);
+                    Event event = new Event(eventID, startDay, startMonth, startYear, startHour, startMinute, endDay, endMonth, endYear, endHour, endMinute, title, location, isAllDay, daysLeft, description, reminder);
 
                     key = DateTimeUtils.formattedDate(mContext, startDayOfWeek, startMonth, startDay, startYear);
                     if (!eventMap.containsKey(key)) {
@@ -122,7 +124,7 @@ public class DataStore {
                     Calendar cal = new GregorianCalendar(startYear, startMonth, startDay);
                     Calendar orig = (Calendar) cal.clone();
                     for (int i = 0; i < daysLeft; i++) {
-                        Event event = new Event(eventID, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR), 0, 0, endDay, endMonth, endYear, 0, 0, title, location, isAllDay, daysLeft - i, description);
+                        Event event = new Event(eventID, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR), 0, 0, endDay, endMonth, endYear, 0, 0, title, location, isAllDay, daysLeft - i, description, reminder);
                         event.allDayStartDay = orig.get(Calendar.DAY_OF_MONTH);
                         event.allDayStartMonth = orig.get(Calendar.MONTH);
                         event.allDayStartYear = orig.get(Calendar.YEAR);
@@ -142,7 +144,57 @@ public class DataStore {
         return eventMap;
     }
 
+    public List<NotificationData> getNotificationData() {
+        List<NotificationData> notificationDataList = new ArrayList<NotificationData>();
+        String selectQuery = "SELECT  * FROM " + AgendaSQLiteHelper.TABLE_NAME;
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
+        String title;
+        boolean isAllDay;
+        long startTime;
+        int startHour, startMinute;
+        int reminderTime;
+        int columnID;
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        if (cursor.moveToFirst()) {
+            do {
+                columnID = cursor.getInt(0);
+                title = cursor.getString(3);
+                startTime = cursor.getLong(1);
+                reminderTime = cursor.getInt(8);
+                isAllDay = cursor.getInt(5) == 1 ? true : false;
+                calendar.setTimeInMillis(startTime);
+                if (!isAllDay) {
+                    startHour = calendar.get(Calendar.HOUR_OF_DAY);
+                    startMinute = calendar.get(Calendar.MINUTE);
+                } else {
+                    startHour = startMinute = 0;
+                }
+                NotificationData data = new NotificationData();
+                data.eventID = columnID;
+                data.title = title;
+                data.time = DateTimeUtils.formattedTime(startHour, startMinute).toString();
+                data.startDay = calendar.get(Calendar.DAY_OF_MONTH);
+                data.startMonth = calendar.get(Calendar.MONTH);
+                data.startYear = calendar.get(Calendar.YEAR);
+                data.startHour = startHour;
+                data.startMinute = startMinute;
+                data.reminderTime = reminderTime;
+                notificationDataList.add(data);
+            } while (cursor.moveToNext());
+        }
+        return notificationDataList;
+    }
+
     public void deleteEvent(int eventID) {
         mDatabase.execSQL("DELETE FROM " + AgendaSQLiteHelper.TABLE_NAME + " WHERE " + AgendaSQLiteHelper.COLUMN_ID + "= " + eventID);
+    }
+
+    public int getLastColumnID() {
+        String query = "SELECT " + AgendaSQLiteHelper.COLUMN_ID + " from " + AgendaSQLiteHelper.TABLE_NAME + " order by " + AgendaSQLiteHelper.COLUMN_ID + " DESC limit 1";
+        Cursor c = mDatabase.rawQuery(query, null);
+        if (c != null && c.moveToFirst()) {
+            return c.getInt(0);
+        }
+        return 0;
     }
 }
