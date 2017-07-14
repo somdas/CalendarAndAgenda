@@ -53,7 +53,6 @@ public class GridHeaderAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         ViewHolder mHolder = new ViewHolder();
         if (convertView == null) {
-
             convertView = mInflater.inflate(R.layout.date_cell, null);
             TextView date = (TextView) convertView.findViewById(R.id.cell);
             mHolder.date = date;

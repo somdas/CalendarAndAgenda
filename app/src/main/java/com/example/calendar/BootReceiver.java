@@ -25,6 +25,8 @@ public class BootReceiver extends BroadcastReceiver {
         Calendar current = Calendar.getInstance(TimeZone.getDefault());
         Calendar start;
         for (NotificationData data : notificationDataList) {
+
+            // Schedule alarms for all events that have start time after the current time
             if (data.reminderTime != -1) {
                 start = new GregorianCalendar(data.startYear, data.startMonth, data.startDay, data.startHour, data.startMinute);
                 start.add(Calendar.MINUTE, -data.reminderTime);

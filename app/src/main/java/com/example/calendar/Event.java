@@ -3,6 +3,7 @@ package com.example.calendar;
 /**
  * Created by sbandyop on 7/5/2017.
  */
+// Container for event data
 public class Event
 {
     public Event(int eventID, int startDay, int startMonth, int startYear, int startHour, int startMinute, int endDay, int endMonth, int endYear, int endHour, int endMinute, String title, String location, boolean isAllDay, int daysLeft, String description, int reminder)

@@ -26,8 +26,7 @@ public class EventListAdapter extends BaseAdapter {
     private final static int TYPE_EVENT = 2;
     private final static int TOTAL_TYPES = 3;
 
-    public EventListAdapter(Context context, List<AdapterContainer> containerList)
-    {
+    public EventListAdapter(Context context, List<AdapterContainer> containerList) {
         mInflater = LayoutInflater.from(context);
         mContext = context;
         mContainerList = containerList;
@@ -73,18 +72,16 @@ public class EventListAdapter extends BaseAdapter {
         ViewHolder mHolder = new ViewHolder();
         if (convertView == null) {
 
-            if (getItemViewType(position) == TYPE_HEADER)
-            {
+            // Inflate layout based on the type of information
+            if (getItemViewType(position) == TYPE_HEADER) {
                 convertView = mInflater.inflate(R.layout.header_layput, null);
                 TextView title = (TextView) convertView.findViewById(R.id.date_title);
                 mHolder.title = title;
-            }
-            else if (getItemViewType(position) == TYPE_NO_EVENT) {
+            } else if (getItemViewType(position) == TYPE_NO_EVENT) {
                 convertView = mInflater.inflate(R.layout.no_event_layout, null);
                 TextView no_event = (TextView) convertView.findViewById(R.id.no_event);
                 mHolder.no_event = no_event;
-            }
-            else {
+            } else {
                 convertView = mInflater.inflate(R.layout.event_layout, null);
                 TextView curr_title = (TextView) convertView.findViewById(R.id.curr_title);
                 TextView curr_location = (TextView) convertView.findViewById(R.id.curr_location);
@@ -98,11 +95,8 @@ public class EventListAdapter extends BaseAdapter {
                 mHolder.loc_layout = loc_layout;
 
             }
-
             convertView.setTag(mHolder);
-        }
-        else
-        {
+        } else {
             mHolder = (ViewHolder) convertView.getTag();
         }
 
@@ -113,44 +107,32 @@ public class EventListAdapter extends BaseAdapter {
         } else {
             Event event = mContainerList.get(position).event;
             mHolder.curr_title.setText(event.title);
-            if (event.isAllDay)
-            {
+            if (event.isAllDay) {
                 mHolder.curr_time.setText(mContext.getResources().getString(R.string.all_day));
                 mHolder.curr_duration.setText(event.daysLeft + " " + mContext.getResources().getString(R.string.day));
-            }
-            else
-            {
+            } else {
                 String duration = getDuration(event);
                 String time = DateTimeUtils.formattedTime(event.startHour, event.startMinute).toString();
                 mHolder.curr_time.setText(time);
                 mHolder.curr_duration.setText(duration);
             }
 
-            if (event.location == null || event.location.equals(""))
-            {
+            if (event.location == null || event.location.equals("")) {
                 mHolder.loc_layout.setVisibility(View.INVISIBLE);
-            }
-            else
-            {
+            } else {
                 mHolder.curr_location.setText(event.location);
             }
-
         }
-
         return convertView;
-
     }
 
-    private String getDuration(Event event)
-    {
+    private String getDuration(Event event) {
         Calendar start = new GregorianCalendar(event.startYear, event.startMonth, event.startDay, event.startHour, event.startMinute);
         Calendar end = new GregorianCalendar(event.endYear, event.endMonth, event.endDay, event.endHour, event.endMinute);
-        return DateTimeUtils.getDuration(start, end);
-
+        return DateTimeUtils.getDurationInFormattedString(start, end);
     }
 
-    static class ViewHolder
-    {
+    static class ViewHolder {
         ViewFlipper flipper;
         TextView title;
         TextView no_event;

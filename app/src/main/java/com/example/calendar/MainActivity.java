@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
+        // Start the Async Task Loader to load the Agenda and Calendar data
         getLoaderManager().initLoader(0, null, this);
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_RELOAD);
@@ -89,34 +90,50 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onResume();
     }
 
-    /* Method to Populate the List for Calendar and agenda view */
+    /* Method to Populate the List for Calendar and agenda view
+    *  In a single list we have various types of information (Each type of
+    *  information will have a particular layout in the listview. Based on the
+    *  type of the information, the Adapter will return particular view.
+    *  The list contains three type of Information -
+    *   1. Header - Contains Date to be displayed
+    *   2. No event - To indicate that a particular day has no events
+    *   3. Event - Contains details of a Event
+    * */
     LoaderData createContainerList() {
         List<AdapterContainer> containerListLocal = new ArrayList<AdapterContainer>();
         List<CalendarData> calendarDataLisLocal = new ArrayList<CalendarData>();
+
+        /* Our APP shows dates from one year in the past to one year in the future */
         calendarDataLisLocal = DateTimeUtils.getCalendarTwoYears(mContext);
         DataStore dataStore = DataStore.getInstance(this);
         dataStore.open();
+        // Get List of all the events
         HashMap<String, List<Event>> eventMap = dataStore.getAllEvents();
         dataStore.close();
         for (CalendarData data : calendarDataLisLocal) {
             DayEventsData daysData = new DayEventsData();
 
+            // For this Calendar date, events are present.
             if (eventMap.containsKey(data.formattedDate)) {
                 daysData.isNoEvent = false;
                 daysData.eventList = eventMap.get(data.formattedDate);
+                // Sort the events in a particular day
                 Collections.sort(daysData.eventList, new EventComparator());
             }
 
+            // Container for the Day Header, i.e. String containing the formatted date
             AdapterContainer headerContainer = new AdapterContainer();
             headerContainer.isHeader = true;
             headerContainer.header = data.formattedDate;
             containerListLocal.add(headerContainer);
 
             if (daysData.isNoEvent) {
+                // Container for Day with no events
                 AdapterContainer noEventContainer = new AdapterContainer();
                 noEventContainer.isNoEvent = true;
                 containerListLocal.add(noEventContainer);
             } else {
+                // Containers for Day with events. Each event has a single Container
                 for (Event event : daysData.eventList)
                 {
                     AdapterContainer eventContainer = new AdapterContainer();
@@ -138,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return new AgendaLoader(this);
     }
 
+    // Set the listview once all the data has been fetched and the list is ready to be displayed
     public void onLoadFinished(Loader<LoaderData> loader, LoaderData data) {
         containerList = data.adapterContainerList;
         calendarDataList = data.calendarDataList;
@@ -193,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         year = cal.get(Calendar.YEAR);
         dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
+        // List for displaying Name of days in a week.
         List<String> strList = new ArrayList<String>();
         strList.add(mContext.getString(R.string.short_sunday));
         strList.add(mContext.getString(R.string.short_monday));
@@ -211,14 +230,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         final TextView monthHead = (TextView) findViewById(R.id.monthHead);
 
         getGridView().setOnScrollListener(new AbsListView.OnScrollListener() {
-            int firstVisiblePostion;
+            int firstVisiblePosition;
 
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                firstVisiblePostion = getGridView().getFirstVisiblePosition();
+                firstVisiblePosition = getGridView().getFirstVisiblePosition();
 
+                /* While scrolling update the name of the month for which the calendar is displayed.
+                  Please note, the Month name displayed is the for the month whose first day is visible
+                  in the calendar view.
+                 */
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        CalendarData data = calendarDataList.get(firstVisiblePostion);
+                        CalendarData data = calendarDataList.get(firstVisiblePosition);
                         String month = DateTimeUtils.convertMonthIntToStringFull(mContext, data.calendar.get(Calendar.MONTH));
                         monthHead.setText(month);
 
@@ -231,8 +254,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 if (scrollState == 0)
                     return;
-
-
+                /* When we are scrolling the Calendar view, we want to display the
+                   bigger view of the calendar, i.e. Calendar containing 4 rows. Set the
+                   Calendar view height accordingly.
+                 */
                 if (view.getId() == lw.getId()) {
                     getGridView().setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, (int) mContext.getResources().getDimension(R.dimen.long_cal_height)));
                 }
@@ -242,27 +267,36 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         getListView().setOnScrollListener(new AbsListView.OnScrollListener() {
 
-            int firstVisiblePostion;
+            int firstVisiblePosition;
 
             public void onScroll(AbsListView view, final int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-                firstVisiblePostion = getListView().getFirstVisiblePosition();
+                firstVisiblePosition = getListView().getFirstVisiblePosition();
 
+                /* While the user is scrolling through the agenda view, we want to highlight the corresponding
+                  day (First visible in the agenda view) in the calendar view. Also we should be able to automatically
+                  scroll in the calendar view, when day in the agenda view is not visible in calendar view
+                 */
                 runOnUiThread(new Runnable() {
                     public void run() {
                         if (containerList.size() > 0) {
-                            while (!containerList.get(firstVisiblePostion).isHeader)
-                                firstVisiblePostion = firstVisiblePostion - 1;
+                            while (!containerList.get(firstVisiblePosition).isHeader)
+                                firstVisiblePosition = firstVisiblePosition - 1;
 
-                            Calendar calendar = DateTimeUtils.parseDate(mContext, containerList.get(firstVisiblePostion).header);
+                            // Calendar for the first day who's event(s) are visible in the agenda view.
+                            Calendar calendar = DateTimeUtils.parseDate(mContext, containerList.get(firstVisiblePosition).header);
                             int gridIndex = 1;
+                            // Find the correct position which needs to be highlighted in the Calendar view.
                             gridIndex = DateTimeUtils.getDurationInDays(mStartDate, calendar);
                             calendarDataList.get(gridIndex).isCurrent = true;
+
+                            // Reset the old highlighted date in the Calendar view
                             if (mGridIndex != gridIndex)
                                 calendarDataList.get(mGridIndex).isCurrent = false;
                             mGridIndex = gridIndex;
+                            // Update the Calendar view
                             calendarDateAdapter.notifyDataSetChanged();
-
+                            // Scroll to the particular position in the Calendar view
                             getGridView().post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -280,13 +314,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 if (scrollState == 0)
                     return;
 
+                /* When we are scrolling the Agenda view, we want to display the
+                   smaller view of the calendar, i.e. Calendar containing 2 rows. Set the
+                   Calendar view height accordingly.
+                */
                 if (view.getId() == lw.getId()) {
                     getGridView().setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, (int) mContext.getResources().getDimension(R.dimen.short_cal_height)));
-
                 }
             }
         });
 
+        // When the app starts we want to Scroll to the Agenda for Today.
         String str = DateTimeUtils.formattedDate(mContext, dayOfWeek, month, day, year);
         int index = 1;
         for (int i = 0; i < containerList.size(); i++)
@@ -298,11 +336,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     index = i;
                     break;
                 }
-
             }
         }
         getListView().setSelection(index);
 
+        // When the app starts we want to show Today's Date highlighted.
         int gridIndex = DateTimeUtils.getDurationInDays(mStartDate, cal);
 
         getGridView().setSelection(gridIndex);
@@ -311,6 +349,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id){
                 AdapterContainer container = containerList.get(position);
+                /* User clicks on "No event". Launch AddActivity with Corresponding date set for which "No Event"
+                  is clicked
+                 */
                 if (container.isNoEvent) {
                     String header = containerList.get(position - 1).header;
                     Calendar calendar = DateTimeUtils.parseDate(mContext, header);
@@ -327,6 +368,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     intent.putExtra(Constants.KEY_START_MINUTE, current.get(Calendar.MINUTE));
                     startActivity(intent);
                 } else if (!container.isNoEvent && !container.isHeader) {
+                    /* User clicks on a particular event. Open the AddActivity with all
+                       details for the activity set
+                    */
                     Intent intent = new Intent();
                     intent.setClass(mContext, AddActivity.class);
                     intent.putExtra(Constants.KEY_IS_EDIT, true);
@@ -365,10 +409,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(ACTION_RELOAD)) {
+                // User has Created a new event. Refresh the Agenda view.
                 containerList.clear();
                 getLoaderManager().restartLoader(0, null, mInstance);
                 eventListAdapter.notifyDataSetChanged();
             } else if (intent.getAction().equals(ACTION_DATE_CLICK)) {
+                /* User has Clicked on a particular date on the Calendar. Scroll the
+                  Agenda view to display the agenda for the particular date.
+                 */
                 int gridPos = intent.getIntExtra(CAL_POSITION, 0);
                 Calendar calendar = calendarDataList.get(gridPos).calendar;
                 String str = DateTimeUtils.formattedDate(mContext, calendar.get(Calendar.DAY_OF_WEEK), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.YEAR));
@@ -438,6 +486,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         List<CalendarData> calendarDataList;
     }
 
+    /* Comparator to sort events for a particular day. First ALL-Day events
+       are displayed, followed by other events sorted according to time
+     */
     class EventComparator implements Comparator<Event> {
         public int compare(Event a, Event b) {
             if (a.isAllDay && !b.isAllDay)

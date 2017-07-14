@@ -44,6 +44,8 @@ public class DataStore {
        mDbHelper.close();
     }
 
+    /* Method to store a event
+     */
     public void createAgenda(int startDay, int startMonth, int startYear, int startHour, int startMinute, int endDay, int endMonth, int endYear, int endHour, int endMinute, String title, String location, boolean isAllDay, String description, int reminderTime) {
 
 
@@ -73,6 +75,8 @@ public class DataStore {
                 values);
     }
 
+    /* Method to get all events
+     */
     public HashMap<String, List<Event>> getAllEvents() {
         HashMap<String, List<Event>> eventMap = new HashMap<String, List<Event>>();
         List<Event> currEventList = new ArrayList<Event>();
@@ -121,6 +125,8 @@ public class DataStore {
                     currEventList = eventMap.get(key);
                     currEventList.add(event);
                 } else {
+                    /* For ALl-Day event, break it into one event for each of the days
+                     */
                     Calendar cal = new GregorianCalendar(startYear, startMonth, startDay);
                     Calendar orig = (Calendar) cal.clone();
                     for (int i = 0; i < daysLeft; i++) {
@@ -138,12 +144,13 @@ public class DataStore {
                         cal.add(Calendar.DATE, 1);
                     }
                 }
-
             } while (cursor.moveToNext());
         }
         return eventMap;
     }
 
+    /* Get all Data that is required to display notification.
+     */
     public List<NotificationData> getNotificationData() {
         List<NotificationData> notificationDataList = new ArrayList<NotificationData>();
         String selectQuery = "SELECT  * FROM " + AgendaSQLiteHelper.TABLE_NAME;
@@ -185,14 +192,17 @@ public class DataStore {
         return notificationDataList;
     }
 
+    // Delete a particular Event.
     public void deleteEvent(int eventID) {
         mDatabase.execSQL("DELETE FROM " + AgendaSQLiteHelper.TABLE_NAME + " WHERE " + AgendaSQLiteHelper.COLUMN_ID + "= " + eventID);
     }
 
+    // Delete all events. Required for unit testing
     public void deleteAll() {
         mDatabase.execSQL("DELETE FROM " + AgendaSQLiteHelper.TABLE_NAME);
     }
 
+    // Get Column ID/ EVENT ID of the last inserted event
     public int getLastColumnID() {
         String query = "SELECT " + AgendaSQLiteHelper.COLUMN_ID + " from " + AgendaSQLiteHelper.TABLE_NAME + " order by " + AgendaSQLiteHelper.COLUMN_ID + " DESC limit 1";
         Cursor c = mDatabase.rawQuery(query, null);

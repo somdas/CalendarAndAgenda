@@ -13,9 +13,6 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
-/**
- * To work on unit tests, switch the Test Artifact in the Build Variants view.
- */
 @RunWith(MockitoJUnitRunner.class)
 public class DateUtilsUnitTest {
 
@@ -28,8 +25,6 @@ public class DateUtilsUnitTest {
                 .thenReturn("Sun");
         when(mMockContext.getString(R.string.short_january))
                 .thenReturn("Jan");
-
-
     }
 
     @Test
@@ -50,11 +45,11 @@ public class DateUtilsUnitTest {
         java.util.Calendar end = (java.util.Calendar) start.clone();
         end.add(java.util.Calendar.HOUR, 1);
 
-        String str = DateTimeUtils.getDuration(start, end);
+        String str = DateTimeUtils.getDurationInFormattedString(start, end);
         assertThat(str, is("1 h"));
 
         end.add(java.util.Calendar.MINUTE, 20);
-        str = DateTimeUtils.getDuration(start, end);
+        str = DateTimeUtils.getDurationInFormattedString(start, end);
         assertThat(str, is("1 h 20 m"));
     }
 
@@ -87,6 +82,4 @@ public class DateUtilsUnitTest {
         assertThat(cal.get(java.util.Calendar.MONTH), is(0));
         assertThat(cal.get(java.util.Calendar.YEAR), is(2017));
     }
-
-
 }

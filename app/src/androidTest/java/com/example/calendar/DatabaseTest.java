@@ -116,5 +116,4 @@ public class DatabaseTest {
         assertThat(eventList, is(nullValue()));
         store.deleteAll();
     }
-
 }

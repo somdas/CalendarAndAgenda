@@ -61,7 +61,6 @@ public class CalendarDateAdapter extends BaseAdapter {
         final int currPosition = position;
         ViewHolder mHolder = new ViewHolder();
         if (convertView == null) {
-
             convertView = mInflater.inflate(R.layout.date_cell, null);
             TextView date = (TextView) convertView.findViewById(R.id.cell);
             mHolder.date = date;
@@ -79,6 +78,7 @@ public class CalendarDateAdapter extends BaseAdapter {
             else
                 mHolder.date.setText(" " + day + " ");
         else {
+            // Special Handling for 1st Day of the month
             final SpannableString text = new SpannableString("" + day + " " + DateTimeUtils.convertMonthIntToStringShort(mContext, data.calendar.get(Calendar.MONTH)));
             text.setSpan(new RelativeSizeSpan(0.5f), 0, 0,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -87,6 +87,7 @@ public class CalendarDateAdapter extends BaseAdapter {
             mHolder.date.setText(text);
         }
 
+        // Handle the highlighted date
         if (data.isCurrent) {
             mHolder.date.setBackgroundResource(R.drawable.shape);
             mHolder.date.setTextColor(ContextCompat.getColor(mContext, R.color.white));
@@ -103,9 +104,7 @@ public class CalendarDateAdapter extends BaseAdapter {
                 LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
             }
         });
-
         return convertView;
-
     }
 
     static class ViewHolder {

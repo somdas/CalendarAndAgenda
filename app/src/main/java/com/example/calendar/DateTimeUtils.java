@@ -122,6 +122,7 @@ public class DateTimeUtils {
                 .append(convertDayIntToString(context, dayOfWeek)).append(", ").append(convertMonthIntToStringShort(context, month)).append(" ").append(dayOfMonth).append(", ").append(year).toString();
     }
 
+    // Convert formatted Date to Calendar Object
     static Calendar parseDate(Context context, String date) {
         String month = date.substring(5, 8);
         int monInt = convertMonthStringToInt(context, month);
@@ -164,7 +165,7 @@ public class DateTimeUtils {
                 .append(hourStr).append(":").append(minuteStr).append(" ").append(AM_PM);
     }
 
-
+    // Get Calendar Data for 2 years - One year before the current date to one year after the current date.
     static List<CalendarData> getCalendarTwoYears(Context context) {
         String date;
         List<CalendarData> calendarList = new ArrayList<CalendarData>();
@@ -193,7 +194,8 @@ public class DateTimeUtils {
         return calendarList;
     }
 
-    static String getDuration(Calendar start, Calendar end) {
+    // Get duration (less than 24 hours) in Formatted form.
+    static String getDurationInFormattedString(Calendar start, Calendar end) {
         StringBuilder res = new StringBuilder();
         int minutes = 0;
         long seconds = (end.getTimeInMillis() - start.getTimeInMillis()) / 1000;

@@ -19,8 +19,7 @@ public class TextDatePicker implements View.OnClickListener, DatePickerDialog.On
     int dayOfWeek;
     private Context context;
 
-    public TextDatePicker(Context context, int dateViewID)
-    {
+    public TextDatePicker(Context context, int dateViewID) {
         Activity act = (Activity)context;
         this.dateView = (TextView)act.findViewById(dateViewID);
         this.dateView.setOnClickListener(this);
@@ -40,6 +39,7 @@ public class TextDatePicker implements View.OnClickListener, DatePickerDialog.On
         dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         updateDisplay();
     }
+
     @Override
     public void onClick(View v) {
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());

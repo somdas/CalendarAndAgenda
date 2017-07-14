@@ -15,7 +15,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context arg0, Intent arg1) {
-
+        // Display Notification
         String title = arg1.getExtras().getString(Constants.KEY_TITLE);
         String time = arg1.getExtras().getString(Constants.KEY_TIME);
         NotificationCompat.Builder mBuilder =

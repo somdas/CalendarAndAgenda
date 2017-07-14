@@ -43,6 +43,7 @@ public class AddActivity extends AppCompatActivity {
     private static final int NO_ERR = 0;
     private static final int ERR_START_AFTER_END = 1;
     private static final int ERR_TIME_MORE_24 = 2;
+    private static final int SECONDS_IN_A_DAY = 86400;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +66,7 @@ public class AddActivity extends AppCompatActivity {
             isEdit = existingInfo.getBoolean(Constants.KEY_IS_EDIT);
             isDateFixed = existingInfo.getBoolean(Constants.KEY_IS_DATE_FIXED);
             if (isEdit) {
+                // Get the details, if the activity was created by clicking on an existing event
                 mTitle = existingInfo.getString(Constants.KEY_TITLE);
                 mLocation = existingInfo.getString(Constants.KEY_LOCATION);
                 mDescription = existingInfo.getString(Constants.KEY_DESC);
@@ -83,6 +85,7 @@ public class AddActivity extends AppCompatActivity {
                 mEventId = existingInfo.getInt(Constants.KEY_EVENT_ID);
                 mReminder = existingInfo.getInt(Constants.KEY_REMINDER);
             } else if (isDateFixed) {
+                // Get the details, if the activity was created by clicking on "No event"
                 mStartDay = existingInfo.getInt(Constants.KEY_START_DAY);
                 mStartMonth = existingInfo.getInt(Constants.KEY_START_MONTH);
                 mStartYear = existingInfo.getInt(Constants.KEY_START_YEAR);
@@ -91,11 +94,13 @@ public class AddActivity extends AppCompatActivity {
             }
         }
         setDateTime();
+        // Fill up the details (if any available)
         if (isEdit)
             fillForm();
         handleSwitchChange();
     }
 
+    // Set the Date and Time field. Also add Date & Time picker listeners on the text views
     private void setDateTime() {
         int day, month, year, dayOfWeek, hour, minute;
         Calendar cal;
@@ -169,6 +174,7 @@ public class AddActivity extends AppCompatActivity {
         mySpinner.setSelection(pos);
     }
 
+    // When All-Day switch is turned on, the start & end time should not be visible.
     private void handleSwitchChange() {
         Switch onOffSwitch = (Switch)  findViewById(R.id.toggBtn);
         onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -205,9 +211,9 @@ public class AddActivity extends AppCompatActivity {
             finish();
         }
         if (item.getItemId() == R.id.done) {
+            // Save the Event Data
             handleSaveClick();
         }
-
         return true;
     }
 
@@ -230,6 +236,7 @@ public class AddActivity extends AppCompatActivity {
 
             DataStore dataStore = DataStore.getInstance(this);
             dataStore.open();
+            // If we are editing an existing event, then delete the old entry for the event & add the new entry
             if (isEdit)
                 dataStore.deleteEvent(mEventId);
 
@@ -240,8 +247,8 @@ public class AddActivity extends AppCompatActivity {
             int columnId = dataStore.getLastColumnID();
             dataStore.close();
 
-
             if (reminderInSec != -1) {
+                // Set Reminder by creating an Alarm.
                 start.add(Calendar.MINUTE, -reminderInSec);
                 if (start.after(now)) {
                     Intent alarmIntent = new Intent(this,
@@ -260,6 +267,7 @@ public class AddActivity extends AppCompatActivity {
                             start.getTimeInMillis(),
                             pendingIntent);
                     if (isEdit) {
+                        // If we are editing the event, then delete the old alarm.
                         PendingIntent oldIntent = PendingIntent.getBroadcast(
                                 this, mEventId,
                                 alarmIntent,
@@ -270,9 +278,9 @@ public class AddActivity extends AppCompatActivity {
                 }
             }
 
+            // Inform MainActivity, that new event has been added, so that Agenda view is refreshed
             Intent intent = new Intent(MainActivity.ACTION_RELOAD);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
             finish();
         }
     }
@@ -309,6 +317,10 @@ public class AddActivity extends AppCompatActivity {
         return -1;
     }
 
+    /* Method to check if the event details are valid.  If start date is after end
+       date, then form is not valid. Also, if the event is not ALL-DAY, then the
+       duration of the event cannot be more than 24 hours
+     */
     private int isFormValid() {
         Calendar start = new GregorianCalendar(datePicker1.year, datePicker1.month, datePicker1.day, timePicker1.hour, timePicker1.minute);
         Calendar end = new GregorianCalendar(datePicker2.year, datePicker2.month, datePicker2.day, timePicker2.hour, timePicker2.minute);
@@ -317,7 +329,7 @@ public class AddActivity extends AppCompatActivity {
         Switch onOffSwitch = (Switch) findViewById(R.id.toggBtn);
         if (!onOffSwitch.isChecked()) {
             long seconds = (end.getTimeInMillis() - start.getTimeInMillis()) / 1000;
-            if (seconds > 86400)
+            if (seconds > SECONDS_IN_A_DAY)
                 return ERR_START_AFTER_END;
         }
         return NO_ERR;
