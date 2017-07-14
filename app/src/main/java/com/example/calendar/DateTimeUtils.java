@@ -223,11 +223,16 @@ public class DateTimeUtils {
 
     public static int daysSince(Calendar startDate, Calendar endDate) {
         Calendar presentDate = (Calendar) startDate.clone();
+        presentDate.set(Calendar.HOUR, 0);
+        presentDate.set(Calendar.MINUTE, 0);
+        Calendar closeDate = (Calendar) endDate.clone();
+        closeDate.set(Calendar.HOUR, 0);
+        closeDate.set(Calendar.MINUTE, 0);
 
         int daysSince = 0;
 
-        while (presentDate.before(endDate)) {
-            presentDate.add(Calendar.DAY_OF_MONTH, 1);
+        while (presentDate.before(closeDate)) {
+            presentDate.add(Calendar.DATE, 1);
             daysSince++;
         }
         return daysSince + 1;

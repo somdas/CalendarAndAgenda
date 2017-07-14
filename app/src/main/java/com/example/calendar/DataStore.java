@@ -189,6 +189,10 @@ public class DataStore {
         mDatabase.execSQL("DELETE FROM " + AgendaSQLiteHelper.TABLE_NAME + " WHERE " + AgendaSQLiteHelper.COLUMN_ID + "= " + eventID);
     }
 
+    public void deleteAll() {
+        mDatabase.execSQL("DELETE FROM " + AgendaSQLiteHelper.TABLE_NAME);
+    }
+
     public int getLastColumnID() {
         String query = "SELECT " + AgendaSQLiteHelper.COLUMN_ID + " from " + AgendaSQLiteHelper.TABLE_NAME + " order by " + AgendaSQLiteHelper.COLUMN_ID + " DESC limit 1";
         Cursor c = mDatabase.rawQuery(query, null);
