@@ -26,7 +26,7 @@ public class DatabaseTest {
     @Before
     public void setUp() {
         store = DataStore.getInstance(InstrumentationRegistry.getTargetContext());
-        store.open(); 
+        store.open();
         store.deleteAll();
     }
 
