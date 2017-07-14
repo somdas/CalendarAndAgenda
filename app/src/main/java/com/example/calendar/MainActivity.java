@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setSupportActionBar(toolbar);
         mContext = this;
         mInstance = this;
+        /* Calendar Date starts from last sunday before Same date one year ago */
         mStartDate = Calendar.getInstance(TimeZone.getDefault());
         mStartDate.add(Calendar.YEAR, -1);
         while (mStartDate.get(Calendar.DAY_OF_WEEK) != 1)
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onResume();
     }
 
+    /* Method to Populate the List for Calendar and agenda view */
     LoaderData createContainerList() {
         List<AdapterContainer> containerListLocal = new ArrayList<AdapterContainer>();
         List<CalendarData> calendarDataLisLocal = new ArrayList<CalendarData>();
