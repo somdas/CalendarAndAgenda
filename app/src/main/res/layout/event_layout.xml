@@ -70,6 +70,40 @@
             android:layout_alignBottom="@+id/imageView"
             android:layout_toRightOf="@+id/imageView"
             android:layout_toEndOf="@+id/imageView" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/curr_location"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal">
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_weather_lightning_rainy_grey600_24dp"
+                    android:id="@+id/weatherIcon"
+                    android:layout_row="0"
+                    android:layout_column="10" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="21 ℃"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/temperature"
+                    android:layout_row="0"
+                    android:layout_column="11" />
+            </GridLayout>
+        </LinearLayout>
     </RelativeLayout>
 
     <View
