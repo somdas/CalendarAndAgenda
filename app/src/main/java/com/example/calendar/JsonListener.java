@@ -29,9 +29,10 @@ public class JsonListener implements Response.Listener<JSONObject>, Response.Err
     Calendar mDate;
     private static final String TAG_DATE_LIST = "list";
     private static final String TAG_DATE = "dt";
-    private static final String TAG_TEMPERATURE = "temp";
-    private static final String TAG_MIN_TEMP = "min";
-    private static final String TAG_MAX_TEMP = "max";
+    private static final String TAG_TEMPERATURE = "main";
+    private static final String TAG_MIN_TEMP = "temp_min";
+    private static final String TAG_MAX_TEMP = "temp_max";
+    private static final String TAG_CURR_TEMP = "temp";
     private static final String TAG_WEATHER = "weather";
     private static final String TAG_ICON_ID = "icon";
     private static final String CENTIGRADE_UNICODE = "℃";
@@ -74,6 +75,9 @@ public class JsonListener implements Response.Listener<JSONObject>, Response.Err
     }
 
     WeatherData getWeatherData(JSONObject response) {
+        long minimum = Long.MAX_VALUE;
+        int minTemp = 0;
+        String minIcon = "";
 
         try {
             JSONArray dates = response.getJSONArray(TAG_DATE_LIST);
@@ -82,52 +86,52 @@ public class JsonListener implements Response.Listener<JSONObject>, Response.Err
                 long time = date.getLong(TAG_DATE) * 1000;
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(time);
-                if (cal.get(Calendar.MONTH) != mDate.get(Calendar.MONTH) || cal.get(Calendar.DAY_OF_MONTH) != mDate.get(Calendar.DAY_OF_MONTH) || cal.get(Calendar.YEAR) != mDate.get(Calendar.YEAR)) {
-                    String url = mTracker.get(mTextView);
-                    continue;
-                } else {
-                    JSONObject temp = date.getJSONObject(TAG_TEMPERATURE);
-                    int currTemp = 0;
-                    if (temp != null) {
-                        Double min = temp.getDouble(TAG_MIN_TEMP);
-                        Double max = temp.getDouble(TAG_MAX_TEMP);
-                        int kelvinTemp = (int) ((min + max) / 2);
-                        currTemp = kelvinTemp - 273;
-                    }
-                    JSONArray weather = date.getJSONArray(TAG_WEATHER);
-                    String icon = weather.getJSONObject(0).getString(TAG_ICON_ID);
-                    WeatherData data = new WeatherData();
-                    data.temp = currTemp;
-                    data.code = icon;
-                    return data;
+                JSONObject temp = date.getJSONObject(TAG_TEMPERATURE);
+                int currTemp = 0;
+                if (temp != null) {
+                    //Double min = temp.getDouble(TAG_MIN_TEMP);
+                    //Double max = temp.getDouble(TAG_MAX_TEMP);
+                    int kelvinTemp = (int) temp.getDouble(TAG_CURR_TEMP);
+                    currTemp = kelvinTemp - 273;
+                }
+                JSONArray weather = date.getJSONArray(TAG_WEATHER);
+                String icon = weather.getJSONObject(0).getString(TAG_ICON_ID);
+                if (Math.abs(cal.getTimeInMillis() - mDate.getTimeInMillis()) < minimum) {
+                    minTemp = currTemp;
+                    minIcon = icon;
                 }
             }
 
         } catch (JSONException e) {
             return null;
         }
-        return null;
+        WeatherData data = new WeatherData();
+        data.temp = minTemp;
+        data.code = minIcon;
+        return data;
     }
 
     static int getResourceId(String code) {
 
         if (code.equals("01d"))
             return R.drawable.ic_weather_sunny_grey600_24dp;
-        if (code.equals("02d"))
+        if (code.equals("01n"))
+            return R.drawable.ic_weather_night_grey600_24dp;
+        if (code.equals("02d") || code.equals("02n"))
             return R.drawable.ic_weather_partlycloudy_grey600_24dp;
-        if (code.equals("03d"))
+        if (code.equals("03d") || code.equals("03n"))
             return R.drawable.ic_weather_partlycloudy_grey600_24dp;
-        if (code.equals("04d"))
+        if (code.equals("04d") || code.equals("04n"))
             return R.drawable.ic_weather_cloudy_grey600_24dp;
-        if (code.equals("09d"))
+        if (code.equals("09d") || code.equals("09n"))
             return R.drawable.ic_weather_pouring_grey600_24dp;
-        if (code.equals("10d"))
+        if (code.equals("10d") || code.equals("10n"))
             return R.drawable.ic_weather_rainy_grey600_24dp;
-        if (code.equals("11d"))
+        if (code.equals("11d") || code.equals("11n"))
             return R.drawable.ic_weather_lightning_rainy_grey600_24dp;
-        if (code.equals("13d"))
+        if (code.equals("13d") || code.equals("13n"))
             return R.drawable.ic_weather_snowy_rainy_grey600_24dp;
-        if (code.equals("50d"))
+        if (code.equals("50d") || code.equals("50n"))
             return R.drawable.ic_weather_fog_grey600_24dp;
         return R.drawable.ic_weather_sunny_grey600_24dp;
     }

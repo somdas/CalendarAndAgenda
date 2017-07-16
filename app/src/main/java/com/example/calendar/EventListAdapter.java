@@ -130,7 +130,7 @@ public class EventListAdapter extends BaseAdapter {
                 mHolder.loc_layout.setVisibility(View.INVISIBLE);
             } else {
                 mHolder.curr_location.setText(event.location);
-                Calendar cal = new GregorianCalendar(event.startYear, event.startMonth, event.startDay);
+                Calendar cal = new GregorianCalendar(event.startYear, event.startMonth, event.startDay, event.startHour, event.startMinute);
                 mWeatherLoader.displayWeather(event.location, cal, mHolder.weather, mHolder.temp, false);
             }
         }

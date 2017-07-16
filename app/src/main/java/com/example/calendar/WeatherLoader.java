@@ -26,8 +26,9 @@ public class WeatherLoader {
     HashMap<String, WeatherData> cache = new HashMap<String, WeatherData>();
     RequestQueue mRequestQueue;
     Context mContext;
-    private static final int MAX_DAYS_FORECAST_AVAILABLE = 16;
+    private static final int MAX_SLOTS_FORECAST_AVAILABLE = 40;
     private static final String APP_ID = "0454c26fe5d814263bf77ad7e85cd440";
+    private static final double NUMBER_OF_SECONDS_IN_THREE_HOURS = 10800.0;
 
     public WeatherLoader(Context context) {
         mRequestQueue = Volley.newRequestQueue(context);
@@ -40,12 +41,12 @@ public class WeatherLoader {
             tracker.put(textView, null);
             return;
         }
-        int count = DateTimeUtils.daysSince(Calendar.getInstance(TimeZone.getDefault()), date);
-        if (count > MAX_DAYS_FORECAST_AVAILABLE) {
+        int count = (int) numberOfThreeHourSlots(Calendar.getInstance(TimeZone.getDefault()), date) + 1;
+        if (count > MAX_SLOTS_FORECAST_AVAILABLE || count <= 0) {
             tracker.put(textView, null);
             return;
         }
-        StringBuilder stringBuilder = new StringBuilder().append("http://api.openweathermap.org/data/2.5/forecast/daily?q=").append(location).append("&cnt=").append(count).append("&APPID=").append(APP_ID);
+        StringBuilder stringBuilder = new StringBuilder().append("http://api.openweathermap.org/data/2.5/forecast?q=").append(location).append("&cnt=").append(count).append("&APPID=").append(APP_ID);
         String url = stringBuilder.toString();
         tracker.put(textView, url);
         if (cache.containsKey(url)) {
@@ -57,5 +58,11 @@ public class WeatherLoader {
             JsonObjectRequest jsObjRequest = new JsonObjectRequest(url, null, listener, listener);
             mRequestQueue.add(jsObjRequest);
         }
+    }
+
+    private long numberOfThreeHourSlots(Calendar start, Calendar end) {
+        long seconds = (end.getTimeInMillis() - start.getTimeInMillis()) / 1000;
+        double slots = seconds / NUMBER_OF_SECONDS_IN_THREE_HOURS;
+        return Math.round(slots);
     }
 }
