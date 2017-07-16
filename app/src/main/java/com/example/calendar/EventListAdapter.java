@@ -113,7 +113,7 @@ public class EventListAdapter extends BaseAdapter {
         } else if (getItemViewType(position) == TYPE_NO_EVENT) {
         } else {
             Event event = mContainerList.get(position).event;
-            mHolder.curr_title.setText(event.title);
+            mHolder.curr_title.setText(" " + event.title);
             if (event.isAllDay) {
                 mHolder.curr_time.setText(mContext.getResources().getString(R.string.all_day));
                 mHolder.curr_duration.setText(event.daysLeft + " " + mContext.getResources().getString(R.string.day));

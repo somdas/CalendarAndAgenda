@@ -2,10 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/delete"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_delete_white_24dp"
+        android:title="@string/delete" />
+
+    <item
         android:id="@+id/done"
         android:orderInCategory="100"
         app:showAsAction="always"
         android:icon="@drawable/ic_done_white_24dp"
-        android:title="RefreshX"/>
+        android:title="@string/done" />
 
 </menu>

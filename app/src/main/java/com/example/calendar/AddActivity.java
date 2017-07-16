@@ -44,6 +44,7 @@ public class AddActivity extends AppCompatActivity {
     private static final int ERR_START_AFTER_END = 1;
     private static final int ERR_TIME_MORE_24 = 2;
     private static final int SECONDS_IN_A_DAY = 86400;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,9 +116,9 @@ public class AddActivity extends AppCompatActivity {
         hour = cal.get(Calendar.HOUR_OF_DAY);
         minute = cal.get(Calendar.MINUTE);
 
-        TextView date1 = (TextView)findViewById(R.id.date1);
+        TextView date1 = (TextView) findViewById(R.id.date1);
         date1.setText(DateTimeUtils.formattedDate(this, dayOfWeek, month, day, year));
-        time1 = (TextView)findViewById(R.id.time1);
+        time1 = (TextView) findViewById(R.id.time1);
         time1.setText((DateTimeUtils.formattedTime(hour, minute)));
         datePicker2 = new TextDatePicker(this, R.id.date2, null);
         datePicker1 = new TextDatePicker(this, R.id.date1, datePicker2);
@@ -176,7 +177,7 @@ public class AddActivity extends AppCompatActivity {
 
     // When All-Day switch is turned on, the start & end time should not be visible.
     private void handleSwitchChange() {
-        Switch onOffSwitch = (Switch)  findViewById(R.id.toggBtn);
+        Switch onOffSwitch = (Switch) findViewById(R.id.toggBtn);
         onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
@@ -213,6 +214,14 @@ public class AddActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.done) {
             // Save the Event Data
             handleSaveClick();
+        }
+        if (item.getItemId() == R.id.delete) {
+            DataStore dataStore = DataStore.getInstance(this);
+            dataStore.open();
+            dataStore.deleteEvent(mEventId);
+            Intent intent = new Intent(MainActivity.ACTION_RELOAD);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            finish();
         }
         return true;
     }
@@ -339,6 +348,14 @@ public class AddActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_add, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem delete = menu.findItem(R.id.delete);
+        if (!isEdit)
+            delete.setVisible(false);
         return true;
     }
 }
