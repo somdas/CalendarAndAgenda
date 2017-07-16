@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
@@ -20,6 +21,7 @@ public class EventListAdapter extends BaseAdapter {
 
     private Context mContext;
     private LayoutInflater mInflater;
+    private WeatherLoader mWeatherLoader;
     private List<AdapterContainer> mContainerList;
     private final static int TYPE_HEADER = 0;
     private final static int TYPE_NO_EVENT = 1;
@@ -30,6 +32,7 @@ public class EventListAdapter extends BaseAdapter {
         mInflater = LayoutInflater.from(context);
         mContext = context;
         mContainerList = containerList;
+        mWeatherLoader = new WeatherLoader(context);
     }
 
     @Override
@@ -88,11 +91,15 @@ public class EventListAdapter extends BaseAdapter {
                 TextView curr_time = (TextView) convertView.findViewById(R.id.curr_time);
                 TextView curr_duration = (TextView) convertView.findViewById(R.id.curr_duration);
                 RelativeLayout loc_layout = (RelativeLayout) convertView.findViewById(R.id.loc_container);
+                TextView temp = (TextView) convertView.findViewById(R.id.temperature);
+                ImageView weather = (ImageView) convertView.findViewById(R.id.weatherIcon);
                 mHolder.curr_title = curr_title;
                 mHolder.curr_location = curr_location;
                 mHolder.curr_time = curr_time;
                 mHolder.curr_duration = curr_duration;
                 mHolder.loc_layout = loc_layout;
+                mHolder.temp = temp;
+                mHolder.weather = weather;
 
             }
             convertView.setTag(mHolder);
@@ -117,10 +124,14 @@ public class EventListAdapter extends BaseAdapter {
                 mHolder.curr_duration.setText(duration);
             }
 
+            mHolder.weather.setVisibility(View.INVISIBLE);
+            mHolder.temp.setVisibility(View.INVISIBLE);
             if (event.location == null || event.location.equals("")) {
                 mHolder.loc_layout.setVisibility(View.INVISIBLE);
             } else {
                 mHolder.curr_location.setText(event.location);
+                Calendar cal = new GregorianCalendar(event.startYear, event.startMonth, event.startDay, event.startHour, event.startMinute);
+                mWeatherLoader.displayWeather(event.location, cal, mHolder.weather, mHolder.temp, false);
             }
         }
         return convertView;
@@ -135,6 +146,8 @@ public class EventListAdapter extends BaseAdapter {
     static class ViewHolder {
         ViewFlipper flipper;
         TextView title;
+        TextView temp;
+        ImageView weather;
         TextView no_event;
         TextView curr_title;
         TextView curr_location;

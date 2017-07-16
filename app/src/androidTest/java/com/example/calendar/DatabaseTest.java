@@ -104,6 +104,7 @@ public class DatabaseTest {
         store.createAgenda(1, 0, 2017, 1, 0, 1, 0, 2017, 2, 0, "TestTitle1", "TestLoc1", false, "", 15);
         store.createAgenda(3, 0, 2017, 1, 30, 3, 0, 2017, 2, 30, "TestTitle2", "TestLoc2", false, "", 30);
         int id1 = store.getLastColumnID();
+        
         store.createAgenda(5, 0, 2017, 1, 0, 5, 0, 2017, 2, 0, "TestTitle3", "TestLoc3", false, "", 15);
         Calendar calendar = new GregorianCalendar(2017, 0, 3);
         HashMap<String, List<Event>> map = store.getAllEvents();
