@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 final GridView lw = getGridView();
 
-                if (scrollState == 0)
+                if (scrollState == SCROLL_STATE_IDLE)
                     return;
                 /* When we are scrolling the Calendar view, we want to display the
                    bigger view of the calendar, i.e. Calendar containing 4 rows. Set the
@@ -311,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 final ListView lw = getListView();
 
-                if (scrollState == 0)
+                if (scrollState == SCROLL_STATE_IDLE)
                     return;
 
                 /* When we are scrolling the Agenda view, we want to display the
@@ -327,12 +327,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // When the app starts we want to Scroll to the Agenda for Today.
         String str = DateTimeUtils.formattedDate(mContext, dayOfWeek, month, day, year);
         int index = 1;
-        for (int i = 0; i < containerList.size(); i++)
-        {
-            if (containerList.get(i).isHeader)
-            {
-                if (containerList.get(i).header.equals(str))
-                {
+        for (int i = 0; i < containerList.size(); i++) {
+            if (containerList.get(i).isHeader) {
+                if (containerList.get(i).header.equals(str)) {
                     index = i;
                     break;
                 }
@@ -427,7 +424,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             index = i;
                             break;
                         }
-
                     }
                 }
                 getListView().setSelection(index);
