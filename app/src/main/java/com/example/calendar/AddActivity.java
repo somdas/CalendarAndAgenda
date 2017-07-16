@@ -119,11 +119,14 @@ public class AddActivity extends AppCompatActivity {
         date1.setText(DateTimeUtils.formattedDate(this, dayOfWeek, month, day, year));
         time1 = (TextView)findViewById(R.id.time1);
         time1.setText((DateTimeUtils.formattedTime(hour, minute)));
-        datePicker1 = new TextDatePicker(this, R.id.date1);
+        datePicker2 = new TextDatePicker(this, R.id.date2, null);
+        datePicker1 = new TextDatePicker(this, R.id.date1, datePicker2);
         datePicker1.day = day;
         datePicker1.month = month;
         datePicker1.year = year;
-        timePicker1 = new TextTimePicker(this, R.id.time1);
+
+        timePicker2 = new TextTimePicker(this, R.id.time2, null);
+        timePicker1 = new TextTimePicker(this, R.id.time1, timePicker2);
         timePicker1.hour = hour;
         timePicker1.minute = minute;
 
@@ -142,13 +145,10 @@ public class AddActivity extends AppCompatActivity {
         time2 = (TextView) findViewById(R.id.time2);
         time2.setText((DateTimeUtils.formattedTime(hour, minute)));
 
-
-        datePicker2 = new TextDatePicker(this, R.id.date2);
         datePicker2.day = day;
         datePicker2.month = month;
         datePicker2.year = year;
 
-        timePicker2 = new TextTimePicker(this, R.id.time2);
         timePicker2.hour = hour;
         timePicker2.minute = minute;
 

@@ -364,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     intent.putExtra(Constants.KEY_START_DAY, calendar.get(Calendar.DAY_OF_MONTH));
                     intent.putExtra(Constants.KEY_START_MONTH, calendar.get(Calendar.MONTH));
                     intent.putExtra(Constants.KEY_START_YEAR, calendar.get(Calendar.YEAR));
-                    intent.putExtra(Constants.KEY_START_HOUR, current.get(Calendar.HOUR));
+                    intent.putExtra(Constants.KEY_START_HOUR, current.get(Calendar.HOUR_OF_DAY));
                     intent.putExtra(Constants.KEY_START_MINUTE, current.get(Calendar.MINUTE));
                     startActivity(intent);
                 } else if (!container.isNoEvent && !container.isHeader) {

@@ -8,6 +8,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Calendar;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,7 +45,7 @@ public class DateUtilsUnitTest {
     public void testDurationString() throws Exception {
         java.util.Calendar start = java.util.Calendar.getInstance();
         java.util.Calendar end = (java.util.Calendar) start.clone();
-        end.add(java.util.Calendar.HOUR, 1);
+        end.add(Calendar.HOUR_OF_DAY, 1);
 
         String str = DateTimeUtils.getDurationInFormattedString(start, end);
         assertThat(str, is("1 h"));
@@ -62,7 +64,7 @@ public class DateUtilsUnitTest {
         int res = DateTimeUtils.getDurationInDays(start, end);
         assertThat(res, is(3));
 
-        end.add(java.util.Calendar.HOUR, 20);
+        end.add(Calendar.HOUR_OF_DAY, 20);
         res = DateTimeUtils.getDurationInDays(start, end);
         assertThat(res, is(3));
     }
@@ -81,5 +83,21 @@ public class DateUtilsUnitTest {
         assertThat(cal.get(java.util.Calendar.DAY_OF_MONTH), is(1));
         assertThat(cal.get(java.util.Calendar.MONTH), is(0));
         assertThat(cal.get(java.util.Calendar.YEAR), is(2017));
+    }
+
+    @Test
+    public void testParseTime() throws Exception {
+        java.util.Calendar cal = DateTimeUtils.parseTime("09:15 AM");
+        assertThat(cal.get(Calendar.HOUR_OF_DAY), is(9));
+        assertThat(cal.get(Calendar.MINUTE), is(15));
+        cal = DateTimeUtils.parseTime("09:15 PM");
+        assertThat(cal.get(Calendar.HOUR_OF_DAY), is(21));
+        assertThat(cal.get(Calendar.MINUTE), is(15));
+        cal = DateTimeUtils.parseTime("00:00 PM");
+        assertThat(cal.get(Calendar.HOUR_OF_DAY), is(12));
+        assertThat(cal.get(Calendar.MINUTE), is(0));
+        cal = DateTimeUtils.parseTime("00:00 AM");
+        assertThat(cal.get(Calendar.HOUR_OF_DAY), is(0));
+        assertThat(cal.get(Calendar.MINUTE), is(0));
     }
 }

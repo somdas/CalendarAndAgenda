@@ -8,35 +8,40 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
-import java.util.TimeZone;
 
 public class TextTimePicker implements View.OnClickListener, TimePickerDialog.OnTimeSetListener {
-    TextView dateView;
+    TextView timeView;
     int hour;
     int minute;
     private Context context;
+    TextTimePicker endTimePicker;
 
-    public TextTimePicker(Context context, int dateViewID) {
+    public TextTimePicker(Context context, int dateViewID, TextTimePicker endTimePicker) {
         Activity act = (Activity)context;
-        this.dateView = (TextView)act.findViewById(dateViewID);
-        this.dateView.setOnClickListener(this);
+        this.timeView = (TextView) act.findViewById(dateViewID);
+        this.timeView.setOnClickListener(this);
         this.context = context;
         Calendar calendar = Calendar.getInstance();
         hour = calendar.get(Calendar.HOUR_OF_DAY);
         minute = calendar.get(Calendar.MINUTE);
+        this.endTimePicker = endTimePicker;
     }
 
     @Override
     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
         hour = selectedHour;
         minute = selectedMinute;
+        if (endTimePicker != null) {
+            endTimePicker.hour = hour;
+            endTimePicker.minute = minute;
+        }
         updateDisplay();
     }
 
     @Override
     public void onClick(View v) {
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-
+        String timeSet = timeView.getText().toString();
+        Calendar calendar = DateTimeUtils.parseTime(timeSet);
         TimePickerDialog dialog = new TimePickerDialog(context, this,
                 calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
         dialog.show();
@@ -44,10 +49,12 @@ public class TextTimePicker implements View.OnClickListener, TimePickerDialog.On
 
     public void removeClickListener()
     {
-        this.dateView.setOnClickListener(null);
+        this.timeView.setOnClickListener(null);
     }
 
     private void updateDisplay() {
-        dateView.setText(DateTimeUtils.formattedTime(hour, minute));
+        timeView.setText(DateTimeUtils.formattedTime(hour, minute));
+        if (endTimePicker != null)
+            endTimePicker.timeView.setText(DateTimeUtils.formattedTime(hour, minute));
     }
 }

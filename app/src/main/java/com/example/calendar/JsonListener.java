@@ -50,7 +50,11 @@ public class JsonListener implements Response.Listener<JSONObject>, Response.Err
     public void onResponse(JSONObject response) {
         String url = mTracker.get(mTextView);
         WeatherData data = getWeatherData(response);
+        // Update the cache
         mCache.put(url, data);
+        /* Check whether the textView has been reused by some other ListItem. In case
+           it has been reused then do not update the view.
+        */
         if (url == null || !url.equals(mUrl))
             return;
         mTextView.setVisibility(View.VISIBLE);
@@ -89,8 +93,6 @@ public class JsonListener implements Response.Listener<JSONObject>, Response.Err
                 JSONObject temp = date.getJSONObject(TAG_TEMPERATURE);
                 int currTemp = 0;
                 if (temp != null) {
-                    //Double min = temp.getDouble(TAG_MIN_TEMP);
-                    //Double max = temp.getDouble(TAG_MAX_TEMP);
                     int kelvinTemp = (int) temp.getDouble(TAG_CURR_TEMP);
                     currTemp = kelvinTemp - 273;
                 }

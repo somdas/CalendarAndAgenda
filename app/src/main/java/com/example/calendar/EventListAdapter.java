@@ -129,8 +129,10 @@ public class EventListAdapter extends BaseAdapter {
             if (event.location == null || event.location.equals("")) {
                 mHolder.loc_layout.setVisibility(View.INVISIBLE);
             } else {
+                mHolder.loc_layout.setVisibility(View.VISIBLE);
                 mHolder.curr_location.setText(event.location);
                 Calendar cal = new GregorianCalendar(event.startYear, event.startMonth, event.startDay, event.startHour, event.startMinute);
+                // Display Weather information, either from Cache or by making a network query using WeatherLoader
                 mWeatherLoader.displayWeather(event.location, cal, mHolder.weather, mHolder.temp, false);
             }
         }

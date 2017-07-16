@@ -137,6 +137,18 @@ public class DateTimeUtils {
         return cal;
     }
 
+    static Calendar parseTime(String time) {
+        int hour = Integer.parseInt(time.substring(0, 2));
+        int minute = Integer.parseInt(time.substring(3, 5));
+        String AM_PM = time.substring(6);
+        if (AM_PM.equals("PM"))
+            hour = hour + 12;
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minute);
+        return cal;
+    }
+
     static StringBuilder formattedTime(int hourOfDay, int minute) {
         String AM_PM ;
         String minuteStr;
@@ -225,10 +237,10 @@ public class DateTimeUtils {
 
     public static int daysSince(Calendar startDate, Calendar endDate) {
         Calendar presentDate = (Calendar) startDate.clone();
-        presentDate.set(Calendar.HOUR, 0);
+        presentDate.set(Calendar.HOUR_OF_DAY, 0);
         presentDate.set(Calendar.MINUTE, 0);
         Calendar closeDate = (Calendar) endDate.clone();
-        closeDate.set(Calendar.HOUR, 0);
+        closeDate.set(Calendar.HOUR_OF_DAY, 0);
         closeDate.set(Calendar.MINUTE, 0);
 
         int daysSince = 0;

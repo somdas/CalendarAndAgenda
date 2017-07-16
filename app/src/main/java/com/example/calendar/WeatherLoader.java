@@ -18,6 +18,7 @@ import java.util.WeakHashMap;
 
 /**
  * Created by sbandyop on 7/15/2017.
+ * Class to fetch weather details and display details
  */
 public class WeatherLoader {
 
@@ -37,23 +38,33 @@ public class WeatherLoader {
 
 
     public void displayWeather(String location, Calendar date, ImageView imageView, TextView textView, boolean onlyStoreRef) {
+        // Only store reference in tracker to know about the fact that view has been reused.
+        // Currently onlyStoreRef is always False.
         if (onlyStoreRef) {
             tracker.put(textView, null);
             return;
         }
+        /* The OpenWeatherMap API gives weather information in 3 hour interval for 5 upcoming days.
+           Here we try to find number of records to be fetched to get weather information. Note that
+           the API does not support getting weather information for a particular day.
+        */
         int count = (int) numberOfThreeHourSlots(Calendar.getInstance(TimeZone.getDefault()), date) + 1;
+        // Weather information is only available for 5 upcoming days, i.e. count can be max (24/3) * 5
         if (count > MAX_SLOTS_FORECAST_AVAILABLE || count <= 0) {
             tracker.put(textView, null);
             return;
         }
         StringBuilder stringBuilder = new StringBuilder().append("http://api.openweathermap.org/data/2.5/forecast?q=").append(location).append("&cnt=").append(count).append("&APPID=").append(APP_ID);
         String url = stringBuilder.toString();
+        // Maintain a mapping of Textview and the URL.
         tracker.put(textView, url);
         if (cache.containsKey(url)) {
+            // Cache already contains desired information
             textView.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.VISIBLE);
             JsonListener.populateUI(textView, imageView, cache.get(url));
         } else {
+            // Prepare Volley Request and add to the Request Queue. This is for fetching data from internet
             JsonListener listener = new JsonListener(textView, imageView, tracker, cache, url, date);
             JsonObjectRequest jsObjRequest = new JsonObjectRequest(url, null, listener, listener);
             mRequestQueue.add(jsObjRequest);
